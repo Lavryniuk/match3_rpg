@@ -1,10 +1,9 @@
-// App.jsx
 import { useBoard } from "./hooks/useBoard";
 
 const SIZE = 8;
 const TARGET_COLOR = "red"; // цвет цели уровня
-const TARGET_AMOUNT = 10; // сколько блоков собрать
-const MOVES_PER_LEVEL = 10; // количество ходов
+const TARGET_AMOUNT = 20; // сколько блоков собрать
+const MOVES_PER_LEVEL = 20; // количество ходов
 
 export default function App() {
   const {

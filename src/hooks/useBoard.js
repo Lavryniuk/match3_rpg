@@ -11,10 +11,10 @@ export function useBoard(
   const [selectedCell, setSelectedCell] = useState(null);
   const [movesLeft, setMovesLeft] = useState(moves);
   const [collected, setCollected] = useState(0);
-  const [levelStatus, setLevelStatus] = useState(null); // "won" / "lost"
+  const [levelStatus, setLevelStatus] = useState(null);
 
   function handleCellClick(row, col) {
-    if (levelStatus) return; // уровень завершён
+    if (levelStatus) return;
     if (movesLeft <= 0) {
       setLevelStatus("lost");
       return;
@@ -32,7 +32,6 @@ export function useBoard(
 
     const isNeighbour =
       Math.abs(selectedCell.row - row) + Math.abs(selectedCell.col - col) === 1;
-
     if (!isNeighbour) {
       setSelectedCell({ row, col });
       return;
@@ -45,35 +44,54 @@ export function useBoard(
 
     if (!BoardUtils.hasAnyMatches(swappedBoard)) {
       setSelectedCell(null);
-      setMovesLeft((prev) => prev - 1);
-      if (movesLeft - 1 <= 0) setLevelStatus("lost");
+      setMovesLeft((prev) => {
+        const next = prev - 1;
+        if (next <= 0) setLevelStatus("lost");
+        return next;
+      });
       return;
     }
 
-    // Считаем реальные совпадения 3+ для targetColor
-    const matchResult = BoardUtils.checkMatches(swappedBoard);
+    const result = BoardUtils.resolveBoard(swappedBoard);
 
-    const collectedThisMove = matchResult.toRemove.filter(
-      ({ row, col }) => swappedBoard[row][col].color === targetColor
+    const collectedThisMove = result.removed.filter(
+      (cell) => cell.color === targetColor
     ).length;
 
-    // Полная визуальная обработка каскадов
-    const resolvedBoard = BoardUtils.resolveBoard(swappedBoard);
-
-    setBoard(resolvedBoard);
-    setCollected((prev) => {
-      const total = prev + collectedThisMove;
-      if (total >= targetAmount) setLevelStatus("won");
-      return total;
-    });
+    updateGameState(collectedThisMove, result.board, result.removed);
 
     setSelectedCell(null);
-    setMovesLeft((prev) => {
-      const next = prev - 1;
-      if (next <= 0 && collected + collectedThisMove < targetAmount)
-        setLevelStatus("lost");
-      return next;
-    });
+  }
+
+  function updateGameState(
+    collectedThisMove = 0,
+    newBoard = board,
+    removedCells = []
+  ) {
+    const nextCollected = collected + collectedThisMove;
+    const nextMoves = movesLeft - 1;
+
+    let nextLevelStatus = null;
+    if (nextCollected >= targetAmount) {
+      nextLevelStatus = "won";
+    } else if (nextMoves <= 0) {
+      nextLevelStatus = "lost";
+    }
+
+    // Логи
+    console.group("Game State Update");
+    console.log("Collected this move:", collectedThisMove);
+    console.log("Total collected:", nextCollected);
+    console.log("Moves left:", nextMoves);
+    console.log("Removed cells:", removedCells);
+    console.log("Level status:", nextLevelStatus ?? "in progress");
+    console.groupEnd();
+
+    // Обновляем состояния
+    setCollected(nextCollected);
+    setMovesLeft(nextMoves);
+    setBoard(newBoard);
+    if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 
   return {

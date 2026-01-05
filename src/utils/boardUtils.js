@@ -8,20 +8,20 @@ export function getRandomColor(excludedColors = []) {
 
 // create board without starting matches
 export function createBoard(size) {
-  const board = Array.from({ length: size }, () => Array(size).fill(null));
+  const board = Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => ({ color: null }))
+  );
 
   for (let row = 0; row < size; row++) {
     for (let col = 0; col < size; col++) {
       const excludedColors = [];
-
       if (col >= 2 && board[row][col - 1].color === board[row][col - 2].color) {
         excludedColors.push(board[row][col - 1].color);
       }
       if (row >= 2 && board[row - 1][col].color === board[row - 2][col].color) {
         excludedColors.push(board[row - 1][col].color);
       }
-
-      board[row][col] = { color: getRandomColor(excludedColors) };
+      board[row][col].color = getRandomColor(excludedColors);
     }
   }
 
@@ -38,68 +38,106 @@ export function swapCells(board, cellA, cellB) {
 }
 
 // check matches and remove them
-export function checkMatches(boardToCheck) {
-  const size = boardToCheck.length;
-  const toRemove = [];
+export function checkMatches(board) {
+  const size = board.length;
+  const toRemove = new Set();
 
   // horizontal
   for (let row = 0; row < size; row++) {
     let count = 1;
     for (let col = 1; col < size; col++) {
-      if (
-        boardToCheck[row][col].color &&
-        boardToCheck[row][col].color === boardToCheck[row][col - 1].color
-      ) {
+      const curr = board[row][col].color;
+      const prev = board[row][col - 1].color;
+      if (curr && curr === prev) {
         count++;
       } else {
         if (count >= 3) {
-          for (let k = 0; k < count; k++)
-            toRemove.push({ row, col: col - 1 - k });
+          for (let k = 0; k < count; k++) {
+            toRemove.add(
+              JSON.stringify({
+                row,
+                col: col - 1 - k,
+                color: board[row][col - 1 - k].color,
+              })
+            );
+          }
         }
         count = 1;
       }
     }
-    if (count >= 3)
-      for (let k = 0; k < count; k++) toRemove.push({ row, col: size - 1 - k });
+    if (count >= 3) {
+      for (let k = 0; k < count; k++) {
+        toRemove.add(
+          JSON.stringify({
+            row,
+            col: size - 1 - k,
+            color: board[row][size - 1 - k].color,
+          })
+        );
+      }
+    }
   }
 
   // vertical
   for (let col = 0; col < size; col++) {
     let count = 1;
     for (let row = 1; row < size; row++) {
-      if (
-        boardToCheck[row][col].color &&
-        boardToCheck[row][col].color === boardToCheck[row - 1][col].color
-      ) {
+      const curr = board[row][col].color;
+      const prev = board[row - 1][col].color;
+      if (curr && curr === prev) {
         count++;
       } else {
-        if (count >= 3)
-          for (let k = 0; k < count; k++)
-            toRemove.push({ row: row - 1 - k, col });
+        if (count >= 3) {
+          for (let k = 0; k < count; k++) {
+            toRemove.add(
+              JSON.stringify({
+                row: row - 1 - k,
+                col,
+                color: board[row - 1 - k][col].color,
+              })
+            );
+          }
+        }
         count = 1;
       }
     }
-    if (count >= 3)
-      for (let k = 0; k < count; k++) toRemove.push({ row: size - 1 - k, col });
+    if (count >= 3) {
+      for (let k = 0; k < count; k++) {
+        toRemove.add(
+          JSON.stringify({
+            row: size - 1 - k,
+            col,
+            color: board[size - 1 - k][col].color,
+          })
+        );
+      }
+    }
   }
 
-  if (toRemove.length === 0) return { board: boardToCheck, hasMatches: false };
+  if (toRemove.size === 0) return { board, hasMatches: false, removed: [] };
 
-  const newBoard = boardToCheck.map((row) => row.map((cell) => ({ ...cell })));
-  toRemove.forEach(({ row, col }) => (newBoard[row][col] = { color: null }));
+  const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
+  Array.from(toRemove).forEach((item) => {
+    const { row, col } = JSON.parse(item);
+    newBoard[row][col].color = null;
+  });
 
-  return { board: newBoard, hasMatches: true, toRemove };
+  return {
+    board: newBoard,
+    hasMatches: true,
+    removed: Array.from(toRemove).map((i) => JSON.parse(i)),
+  };
 }
 
-// are there any matches
+// are there any matches, switch true|false
 export function hasAnyMatches(board) {
   return checkMatches(board).hasMatches;
 }
 
 // gravity
-export function applyGravity(boardToUpdate) {
-  const size = boardToUpdate.length;
-  const newBoard = boardToUpdate.map((row) => row.map((cell) => ({ ...cell })));
+export function applyGravity(board) {
+  const size = board.length;
+  const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
 
   for (let col = 0; col < size; col++) {
     for (let row = size - 1; row >= 0; row--) {
@@ -124,14 +162,20 @@ export function applyGravity(boardToUpdate) {
 // fully resolve board with cascades
 export function resolveBoard(board) {
   let currentBoard = board;
-  let hasMatches = true;
+  let allRemoved = [];
+  let cascades = 0;
+  let first = true;
 
-  while (hasMatches) {
-    const result = checkMatches(currentBoard);
-    hasMatches = result.hasMatches;
-    currentBoard = result.board;
-    if (hasMatches) currentBoard = applyGravity(currentBoard);
+  while (true) {
+    const matchResult = checkMatches(currentBoard);
+    if (!matchResult.hasMatches) break;
+
+    if (!first) cascades++;
+    first = false;
+
+    allRemoved.push(...matchResult.removed);
+    currentBoard = applyGravity(matchResult.board);
   }
 
-  return currentBoard;
+  return { board: currentBoard, removed: allRemoved, cascades };
 }
