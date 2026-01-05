@@ -1,4 +1,13 @@
-export const COLORS = ["red", "blue", "green", "yellow", "purple"];
+export const COLORS = [
+  "red",
+  "blue",
+  "green",
+  "yellow",
+  "purple",
+  "orange",
+  "pink",
+  "brown",
+];
 
 // random color, excluding given ones
 export function getRandomColor(excludedColors = []) {
@@ -155,6 +164,60 @@ export function applyGravity(board) {
       }
     }
   }
+
+  return newBoard;
+}
+
+//questions?
+export function hasAvailableMoves(board) {
+  const size = board.length;
+
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      const directions = [
+        { rowOffset: 0, colOffset: 1 },
+        { rowOffset: 1, colOffset: 0 },
+      ];
+
+      for (const { rowOffset, colOffset } of directions) {
+        const newRow = row + rowOffset;
+        const newCol = col + colOffset;
+
+        if (newRow < size && newCol < size) {
+          const swappedBoard = swapCells(
+            board,
+            { row, col },
+            { row: newRow, col: newCol }
+          );
+          if (hasAnyMatches(swappedBoard)) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+// shuffle board with no matches to have available moves
+export function shuffleBoard(board) {
+  const size = board.length;
+  const allColors = board.flat().map((cell) => cell.color);
+
+  let newBoard = [];
+  do {
+    const shuffledColors = [...allColors].sort(() => Math.random() - 0.5);
+
+    newBoard = [];
+    for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+      const newRow = [];
+      for (let colIndex = 0; colIndex < size; colIndex++) {
+        newRow.push({ color: shuffledColors[rowIndex * size + colIndex] });
+      }
+      newBoard.push(newRow);
+    }
+  } while (!hasAvailableMoves(newBoard));
 
   return newBoard;
 }

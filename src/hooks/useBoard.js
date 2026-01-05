@@ -7,7 +7,17 @@ export function useBoard(
   targetAmount = 10,
   moves = 10
 ) {
-  const [board, setBoard] = useState(BoardUtils.createBoard(size));
+  const [board, setBoard] = useState(() => {
+    let newBoard = BoardUtils.createBoard(size);
+
+    while (!BoardUtils.hasAvailableMoves(newBoard)) {
+      newBoard = BoardUtils.shuffleBoard(newBoard);
+      newBoard = BoardUtils.resolveBoard(newBoard).board;
+    }
+
+    return newBoard;
+  });
+
   const [selectedCell, setSelectedCell] = useState(null);
   const [movesLeft, setMovesLeft] = useState(moves);
   const [collected, setCollected] = useState(0);
@@ -61,6 +71,16 @@ export function useBoard(
     updateGameState(collectedThisMove, result.board, result.removed);
 
     setSelectedCell(null);
+
+    setBoard((currentBoard) => {
+      if (!BoardUtils.hasAvailableMoves(currentBoard)) {
+        console.log("No moves left, shuffling board...");
+        let shuffled = BoardUtils.shuffleBoard(currentBoard);
+        const cleaned = BoardUtils.resolveBoard(shuffled);
+        return cleaned.board;
+      }
+      return currentBoard;
+    });
   }
 
   function updateGameState(
