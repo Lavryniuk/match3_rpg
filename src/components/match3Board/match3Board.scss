@@ -1,0 +1,57 @@
+.match3 {
+  padding: 20px;
+
+  &__title {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  &__info {
+    margin-bottom: 16px;
+
+    p {
+      margin: 4px 0;
+    }
+  }
+
+  &__status {
+    font-weight: bold;
+    color: gold;
+  }
+
+  &__skills {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  &__skill-button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #3a3a3a;
+    color: white;
+
+    &:hover {
+      background: #555;
+    }
+  }
+
+  &__board {
+    display: grid;
+    gap: 4px;
+  }
+
+  &__cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #333;
+    box-sizing: border-box;
+
+    &--selected {
+      border: 3px solid white;
+    }
+  }
+}
