@@ -68,7 +68,7 @@ export function useBoard(
       (cell) => cell.color === targetColor
     ).length;
 
-    updateGameState(collectedThisMove, result.board, result.removed);
+    updateGameState(collectedThisMove, result.board);
 
     setSelectedCell(null);
 
@@ -83,11 +83,7 @@ export function useBoard(
     });
   }
 
-  function updateGameState(
-    collectedThisMove = 0,
-    newBoard = board,
-    removedCells = []
-  ) {
+  function updateGameState(collectedThisMove = 0, newBoard = board) {
     const nextCollected = collected + collectedThisMove;
     const nextMoves = movesLeft - 1;
 
@@ -98,16 +94,13 @@ export function useBoard(
       nextLevelStatus = "lost";
     }
 
-    // Логи
-    console.group("Game State Update");
-    console.log("Collected this move:", collectedThisMove);
-    console.log("Total collected:", nextCollected);
-    console.log("Moves left:", nextMoves);
-    console.log("Removed cells:", removedCells);
-    console.log("Level status:", nextLevelStatus ?? "in progress");
-    console.groupEnd();
+    if (!BoardUtils.hasAvailableMoves(newBoard)) {
+      console.log("No moves left, shuffling board...");
+      const shuffled = BoardUtils.shuffleBoard(newBoard);
+      const cleaned = BoardUtils.resolveBoard(shuffled);
+      newBoard = cleaned.board;
+    }
 
-    // Обновляем состояния
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
     setBoard(newBoard);
