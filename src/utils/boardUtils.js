@@ -207,7 +207,7 @@ export function shuffleBoard(board) {
 
   let newBoard = [];
   do {
-    const shuffledColors = [...allColors].sort(() => Math.random() - 0.5);
+    const shuffledColors = fisherShuffle(allColors);
 
     newBoard = [];
     for (let rowIndex = 0; rowIndex < size; rowIndex++) {
@@ -220,6 +220,14 @@ export function shuffleBoard(board) {
   } while (!hasAvailableMoves(newBoard));
 
   return newBoard;
+}
+
+function fisherShuffle(colors) {
+  for (let i = colors.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [colors[i], colors[j]] = [colors[j], colors[i]];
+  }
+  return colors;
 }
 
 // fully resolve board with cascades
