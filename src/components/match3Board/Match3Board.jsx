@@ -16,6 +16,8 @@ export default function Match3Board({
     movesLeft,
     collected,
     levelStatus,
+    addMoves,
+    setBoard,
   } = useBoard(size, targetColor, targetAmount, movesPerLevel);
 
   return (
@@ -37,21 +39,21 @@ export default function Match3Board({
       </div>
 
       <div className="match3__skills">
-        {character.skills.map((skill, index) => (
+        {character.skills.map((skill) => (
           <button
-            key={index}
+            key={skill.id}
             className="match3__skill-button"
-            onClick={() => {
-              console.log(`${skill.name} used!`);
-
-              const methodName = skill.name.toLowerCase().replace(/\s+/g, "");
-
-              if (character[methodName]) {
-                character[methodName](board, level);
-              }
-            }}
+            disabled={skill.charges <= 0}
+            onClick={() =>
+              character.useSkill(skill.id, {
+                board,
+                setBoard,
+                addMoves,
+                level,
+              })
+            }
           >
-            {skill.name} (Charge: {skill.charge})
+            {skill.name} ({skill.charges})
           </button>
         ))}
       </div>

@@ -107,6 +107,10 @@ export function useBoard(
     if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 
+  const addMoves = (amount) => {
+    setMovesLeft((prev) => prev + amount);
+  };
+
   return {
     board,
     handleCellClick,
@@ -114,5 +118,7 @@ export function useBoard(
     movesLeft,
     collected,
     levelStatus,
+    addMoves,
+    setBoard,
   };
 }

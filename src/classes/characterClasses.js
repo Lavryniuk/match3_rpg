@@ -32,13 +32,13 @@ export class Sorceress {
     this.name = "Cortana";
     this.class = "Sorceress";
     this.skills = [
-      { name: "Meteorite", charge: 1 },
+      { name: "Meteor", charge: 1 },
       { name: "Reality Warp", charge: 1 },
       { name: "Energy Restore", charge: 1 },
     ];
   }
 
-  meteorite(board) {
+  meteor(board) {
     console.log("Meteorite activated");
     // TODO: крест из 5 клеток
   }
@@ -48,7 +48,7 @@ export class Sorceress {
     // TODO: меняем цвет 5 клеток
   }
 
-  energyRestore(advert = false) {
+  mannaRestore(advert = false) {
     return advert ? 2 : 1;
   }
 }
