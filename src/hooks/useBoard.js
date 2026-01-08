@@ -5,7 +5,7 @@ export function useBoard(
   size = 8,
   targetColor = "red",
   targetAmount = 10,
-  moves = 10
+  moves = 100
 ) {
   const [board, setBoard] = useState(() => {
     let newBoard = BoardUtils.createBoard(size);
@@ -25,10 +25,7 @@ export function useBoard(
 
   function handleCellClick(row, col) {
     if (levelStatus) return;
-    if (movesLeft <= 0) {
-      setLevelStatus("lost");
-      return;
-    }
+    if (movesLeft <= 0) return;
 
     if (!selectedCell) {
       setSelectedCell({ row, col });
@@ -42,6 +39,7 @@ export function useBoard(
 
     const isNeighbour =
       Math.abs(selectedCell.row - row) + Math.abs(selectedCell.col - col) === 1;
+
     if (!isNeighbour) {
       setSelectedCell({ row, col });
       return;
@@ -53,62 +51,63 @@ export function useBoard(
     });
 
     if (!BoardUtils.hasAnyMatches(swappedBoard)) {
+      updateGameState(0, swappedBoard);
       setSelectedCell(null);
-      setMovesLeft((prev) => {
-        const next = prev - 1;
-        if (next <= 0) setLevelStatus("lost");
-        return next;
-      });
       return;
     }
 
-    const result = BoardUtils.resolveBoard(swappedBoard);
-
-    const collectedThisMove = result.removed.filter(
-      (cell) => cell.color === targetColor
-    ).length;
-
-    updateGameState(collectedThisMove, result.board);
-
+    updateGameState(null, swappedBoard);
     setSelectedCell(null);
-
-    setBoard((currentBoard) => {
-      if (!BoardUtils.hasAvailableMoves(currentBoard)) {
-        console.log("No moves left, shuffling board...");
-        let shuffled = BoardUtils.shuffleBoard(currentBoard);
-        const cleaned = BoardUtils.resolveBoard(shuffled);
-        return cleaned.board;
-      }
-      return currentBoard;
-    });
   }
 
-  function updateGameState(collectedThisMove = 0, newBoard = board) {
+  function updateGameState(collectedOverride = null, rawBoard, options = {}) {
+    const { consumesMove = true, grantsMove = 0 } = options;
+
+    const { board: resolvedBoard, removed } = BoardUtils.resolveBoard(rawBoard);
+
+    const collectedThisMove =
+      collectedOverride !== null
+        ? collectedOverride
+        : removed.filter((cell) => cell.color === targetColor).length;
+
     const nextCollected = collected + collectedThisMove;
-    const nextMoves = movesLeft - 1;
+
+    let nextMoves = consumesMove ? movesLeft - 1 : movesLeft;
+    nextMoves += grantsMove;
 
     let nextLevelStatus = null;
-    if (nextCollected >= targetAmount) {
-      nextLevelStatus = "won";
-    } else if (nextMoves <= 0) {
-      nextLevelStatus = "lost";
-    }
+    if (nextCollected >= targetAmount) nextLevelStatus = "won";
+    else if (nextMoves <= 0) nextLevelStatus = "lost";
 
-    if (!BoardUtils.hasAvailableMoves(newBoard)) {
-      console.log("No moves left, shuffling board...");
-      const shuffled = BoardUtils.shuffleBoard(newBoard);
-      const cleaned = BoardUtils.resolveBoard(shuffled);
-      newBoard = cleaned.board;
+    let finalBoard = BoardUtils.applyGravity(resolvedBoard);
+
+    if (!BoardUtils.hasAvailableMoves(finalBoard)) {
+      const shuffled = BoardUtils.shuffleBoard(finalBoard);
+      finalBoard = BoardUtils.resolveBoard(shuffled).board;
     }
 
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
-    setBoard(newBoard);
+    setBoard(finalBoard);
     if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 
-  const addMoves = (amount) => {
-    setMovesLeft((prev) => prev + amount);
+  const applySkillEffect = (
+    character,
+    skillId,
+    board,
+    level,
+    extraContext = {}
+  ) => {
+    const skill = character.getSkill(skillId);
+    if (!skill || skill.charges <= 0) return board;
+
+    const newBoard = skill.effect(board, level, extraContext);
+    skill.charges -= 1;
+    console.log("the same?", board === newBoard);
+    updateGameState(null, newBoard, extraContext.options);
+
+    return newBoard;
   };
 
   return {
@@ -118,7 +117,6 @@ export function useBoard(
     movesLeft,
     collected,
     levelStatus,
-    addMoves,
-    setBoard,
+    applySkillEffect,
   };
 }

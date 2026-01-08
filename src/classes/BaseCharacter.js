@@ -11,12 +11,4 @@ export default class BaseCharacter {
     const skill = this.getSkill(skillId);
     return skill && skill.charges > 0;
   }
-
-  useSkill(skillId, context) {
-    const skill = this.getSkill(skillId);
-    if (!skill || skill.charges <= 0) return;
-
-    skill.effect(context);
-    skill.charges -= 1;
-  }
 }

@@ -16,8 +16,7 @@ export default function Match3Board({
     movesLeft,
     collected,
     levelStatus,
-    addMoves,
-    setBoard,
+    applySkillEffect,
   } = useBoard(size, targetColor, targetAmount, movesPerLevel);
 
   return (
@@ -45,11 +44,8 @@ export default function Match3Board({
             className="match3__skill-button"
             disabled={skill.charges <= 0}
             onClick={() =>
-              character.useSkill(skill.id, {
-                board,
-                setBoard,
-                addMoves,
-                level,
+              applySkillEffect(character, skill.id, board, level, {
+                options: {},
               })
             }
           >

@@ -46,7 +46,7 @@ function App() {
           size={8}
           targetColor="red"
           targetAmount={20}
-          movesPerLevel={20}
+          movesPerLevel={100}
           level={levelNumber}
         />
       )}

@@ -11,35 +11,35 @@ export default class Sorceress extends BaseCharacter {
       {
         id: "meteor",
         name: "Meteor",
-        charges: 1,
+        charges: 100,
         effect: this.meteor,
       },
       {
         id: "realityDistortionr",
         name: "Reality Distortion",
-        charges: 1,
+        charges: 100,
         effect: this.realityDistortion,
       },
       {
         id: "manaRestore",
         name: "Mana Restore",
-        charges: 1,
+        charges: 100,
         effect: this.manaRestore,
       },
     ];
   }
 
-  meteor = ({ board, setBoard, level }) => {
+  meteor = (board, level, context = {}) => {
     const size = board.length;
 
     const center = level < 31 ? this.getRandomCell(size) : null;
 
-    if (!center) return;
+    if (!center) return board;
 
-    this.applyMeteor(board, setBoard, center);
+    return this.applyMeteor(board, center);
   };
 
-  applyMeteor(board, setBoard, center) {
+  applyMeteor(board, center) {
     const { row, col } = center;
 
     const positions = [
@@ -58,10 +58,10 @@ export default class Sorceress extends BaseCharacter {
       }
     });
 
-    setBoard(newBoard);
+    return newBoard;
   }
 
-  realityDistortion = ({ board, setBoard, level }) => {
+  realityDistortion = (board, level, context = {}) => {
     const size = board.length;
     const newBoard = board.map((r) => r.map((c) => ({ ...c })));
 
@@ -73,11 +73,14 @@ export default class Sorceress extends BaseCharacter {
       }
     });
 
-    setBoard(newBoard);
+    return newBoard;
   };
 
-  manaRestore = ({ addMoves }) => {
-    addMoves(1);
+  manaRestore = (board, level, context = {}) => {
+    context.options = context.options || {};
+    context.options.consumesMove = false;
+    context.options.grantsMove = 1;
+    return board;
   };
 
   getRandomCell(size) {
