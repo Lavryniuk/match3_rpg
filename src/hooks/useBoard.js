@@ -51,7 +51,7 @@ export function useBoard(
     });
 
     if (!BoardUtils.hasAnyMatches(swappedBoard)) {
-      updateGameState(0, swappedBoard);
+      updateGameState(0, board);
       setSelectedCell(null);
       return;
     }
