@@ -1,4 +1,6 @@
 import { useBoard } from "../../hooks/useBoard";
+import { useSelectedCell } from "../../hooks/useSelectedCell";
+import { useSkill } from "../../hooks/useSkill";
 import "./Match3Board.scss";
 
 export default function Match3Board({
@@ -11,13 +13,16 @@ export default function Match3Board({
 }) {
   const {
     board,
-    handleCellClick,
-    selectedCell,
     movesLeft,
     collected,
     levelStatus,
-    applySkillEffect,
+    handleSwap,
+    updateGameState,
   } = useBoard(size, targetColor, targetAmount, movesPerLevel);
+
+  const { selectedCell, handleCellClick } = useSelectedCell(handleSwap);
+
+  const { applySkillEffect } = useSkill(updateGameState);
 
   return (
     <div className="match3">
@@ -43,11 +48,7 @@ export default function Match3Board({
             key={skill.id}
             className="match3__skill-button"
             disabled={skill.charges <= 0}
-            onClick={() =>
-              applySkillEffect(character, skill.id, board, level, {
-                options: {},
-              })
-            }
+            onClick={() => applySkillEffect(character, skill.id, board, level)}
           >
             {skill.name} ({skill.charges})
           </button>

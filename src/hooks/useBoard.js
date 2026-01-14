@@ -18,32 +18,13 @@ export function useBoard(
     return newBoard;
   });
 
-  const [selectedCell, setSelectedCell] = useState(null);
   const [movesLeft, setMovesLeft] = useState(moves);
   const [collected, setCollected] = useState(0);
   const [levelStatus, setLevelStatus] = useState(null);
 
-  function handleCellClick(row, col) {
+  function handleSwap(selectedCell, row, col) {
     if (levelStatus) return;
     if (movesLeft <= 0) return;
-
-    if (!selectedCell) {
-      setSelectedCell({ row, col });
-      return;
-    }
-
-    if (selectedCell.row === row && selectedCell.col === col) {
-      setSelectedCell(null);
-      return;
-    }
-
-    const isNeighbour =
-      Math.abs(selectedCell.row - row) + Math.abs(selectedCell.col - col) === 1;
-
-    if (!isNeighbour) {
-      setSelectedCell({ row, col });
-      return;
-    }
 
     const swappedBoard = BoardUtils.swapCells(board, selectedCell, {
       row,
@@ -52,12 +33,10 @@ export function useBoard(
 
     if (!BoardUtils.hasAnyMatches(swappedBoard)) {
       updateGameState(0, board);
-      setSelectedCell(null);
       return;
     }
 
     updateGameState(null, swappedBoard);
-    setSelectedCell(null);
   }
 
   function updateGameState(collectedOverride = null, rawBoard, options = {}) {
@@ -92,31 +71,12 @@ export function useBoard(
     if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 
-  const applySkillEffect = (
-    character,
-    skillId,
-    board,
-    level,
-    extraContext = {}
-  ) => {
-    const skill = character.getSkill(skillId);
-    if (!skill || skill.charges <= 0) return board;
-
-    const newBoard = skill.effect(board, level, extraContext);
-    skill.charges -= 1;
-    console.log("the same?", board === newBoard);
-    updateGameState(null, newBoard, extraContext.options);
-
-    return newBoard;
-  };
-
   return {
     board,
-    handleCellClick,
-    selectedCell,
+    handleSwap,
     movesLeft,
     collected,
     levelStatus,
-    applySkillEffect,
+    updateGameState,
   };
 }

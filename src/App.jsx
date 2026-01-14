@@ -8,6 +8,7 @@ function App() {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [levelNumber, setLevelNumber] = useState(1);
   const [gameStarted, setGameStarted] = useState(false);
+  console.log(selectedCharacter);
 
   const onStartLevel = (level) => {
     setLevelNumber(level);
