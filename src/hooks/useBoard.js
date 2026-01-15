@@ -41,8 +41,14 @@ export function useBoard(
 
   function updateGameState(collectedOverride = null, rawBoard, options = {}) {
     const { consumesMove = true, grantsMove = 0 } = options;
+    console.log(rawBoard);
+    const boardAfterGravity = BoardUtils.applyGravity(rawBoard);
+    console.log(boardAfterGravity);
 
-    const { board: resolvedBoard, removed } = BoardUtils.resolveBoard(rawBoard);
+    const { board: resolvedBoard, removed } =
+      BoardUtils.resolveBoard(boardAfterGravity);
+    console.log(resolvedBoard);
+    console.log(removed);
 
     const collectedThisMove =
       collectedOverride !== null
@@ -58,16 +64,18 @@ export function useBoard(
     if (nextCollected >= targetAmount) nextLevelStatus = "won";
     else if (nextMoves <= 0) nextLevelStatus = "lost";
 
-    let finalBoard = BoardUtils.applyGravity(resolvedBoard);
-
-    if (!BoardUtils.hasAvailableMoves(finalBoard)) {
-      const shuffled = BoardUtils.shuffleBoard(finalBoard);
+    if (!BoardUtils.hasAvailableMoves(resolvedBoard)) {
+      const shuffled = BoardUtils.shuffleBoard(resolvedBoard);
       finalBoard = BoardUtils.resolveBoard(shuffled).board;
     }
 
+    //test
+    const matchResult = BoardUtils.checkMatches(resolvedBoard);
+    console.log(matchResult.hasMatches);
+
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
-    setBoard(finalBoard);
+    setBoard(resolvedBoard);
     if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 

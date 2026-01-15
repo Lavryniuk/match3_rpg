@@ -5,7 +5,7 @@ import {
   contextGeneratorsHigh,
 } from "../classes/skillContextGenerator";
 
-export function useSkill(onUpdateGameState) {
+export function useSkill(updateGameState) {
   function getContextGenerator(skillId, level) {
     if (level <= 30) {
       return contextGeneratorsLow[skillId];
@@ -20,18 +20,18 @@ export function useSkill(onUpdateGameState) {
     const characterInstance = new character.classRef();
 
     const contextGenerator = getContextGenerator(skillId, level);
+    console.log(contextGenerator);
 
     const context = contextGenerator
       ? contextGenerator(skill, board.length)
       : { options: {} };
+    console.log(context);
 
     const newBoard = characterInstance[skillId](board, context);
 
     skill.charges -= 1;
 
-    if (onUpdateGameState) {
-      onUpdateGameState(null, newBoard, context.options);
-    }
+    updateGameState(null, newBoard, context.options);
 
     return newBoard;
   };

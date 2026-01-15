@@ -2,6 +2,16 @@ export function getRandomColor(colors) {
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
+export function generateRandomColors(count, availableColors) {
+  const colors = [];
+
+  for (let i = 0; i < count; i++) {
+    colors.push(getRandomColor(availableColors));
+  }
+
+  return colors;
+}
+
 export function getSkill(character, skillId) {
   return character.skills.find((skill) => skill.id === skillId);
 }

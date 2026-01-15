@@ -1,31 +1,42 @@
 import { getRandomCells, getRandomCell } from "../utils/skillUtils";
 
-import { getRandomColor } from "../utils/skillUtils";
+import { generateRandomColors } from "../utils/skillUtils";
 
 import { COLORS as colors } from "../utils/boardUtils";
 
 const singleCenterDestructive = (skill, boardLength) => ({
-  pattern: skill.pattern,
+  patterns: [skill.pattern],
   centers: [getRandomCell(boardLength)],
 });
 
-const multiPatternDestructive = (skill, boardLength) => ({
-  pattern: skill.pattern[Math.floor(Math.random() * skill.pattern.length)],
-  centers: getRandomCells(boardLength, 2),
-});
+const multiPatternDestructive = (skill, boardLength) => {
+  const centers = getRandomCells(boardLength, 2);
+
+  const patterns = centers.map(
+    () => skill.pattern[Math.floor(Math.random() * skill.pattern.length)]
+  );
+
+  return {
+    centers,
+    patterns,
+  };
+};
 
 const restoreMove = () => ({
   options: { consumesMove: false, grantsMove: 1 },
 });
 
-const entropyRandomColor = (skill, boardLength) => ({
-  cells: getRandomCells(boardLength, 5),
-  color: getRandomColor(colors),
-});
+const entropyRandomColor = (skill, boardLength) => {
+  const cells = getRandomCells(boardLength, 5);
+  return {
+    cells,
+    colors: generateRandomColors(cells.length, colors),
+  };
+};
 
 const entropyNullColor = (skill, boardLength) => ({
   cells: getRandomCells(boardLength, 5),
-  color: null,
+  colors: [null],
 });
 
 export const contextGeneratorsLow = {

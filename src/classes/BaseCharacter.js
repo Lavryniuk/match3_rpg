@@ -2,13 +2,15 @@ export default class BaseCharacter {
   constructor() {}
 
   applyDestructiveSkill(board, context) {
-    const { centers, pattern } = context;
+    const { centers, patterns } = context;
     const newBoard = board.map((r) => r.map((c) => ({ ...c })));
 
-    centers.forEach(({ row, col }) => {
-      pattern.forEach(([r, c]) => {
-        const finalRow = row + r;
-        const finalCol = col + c;
+    centers.forEach((center, i) => {
+      const patternToApply = patterns.length === 1 ? patterns[0] : patterns[i];
+
+      patternToApply.forEach(([r, c]) => {
+        const finalRow = center.row + r;
+        const finalCol = center.col + c;
 
         if (newBoard[finalRow]?.[finalCol]) {
           newBoard[finalRow][finalCol].color = null;
@@ -20,13 +22,14 @@ export default class BaseCharacter {
   }
 
   applyEntropySkill(board, context) {
-    const { cells, color } = context;
+    const { cells, colors } = context;
 
     const newBoard = board.map((r) => r.map((c) => ({ ...c })));
 
-    cells.forEach(({ row, col }) => {
-      if (newBoard[row]?.[col]) {
-        newBoard[row][col].color = color;
+    cells.forEach((cell, i) => {
+      if (newBoard[cell.row]?.[cell.col]) {
+        newBoard[cell.row][cell.col].color =
+          colors.length === 1 ? colors[0] : colors[i];
       }
     });
 
