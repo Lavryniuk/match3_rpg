@@ -58,32 +58,36 @@ export const contextGeneratorsLow = {
 
 export const contextGeneratorsHigh = {
   swordStrike: (skill, boardLength, extraContext) => ({
-    pattern: skill.pattern,
+    patterns: [skill.pattern],
     centers: extraContext?.centers || [],
   }),
   shieldPulse: (skill, boardLength, extraContext) => ({
-    pattern: extraContext?.pattern || [],
+    patterns: extraContext?.pattern || [],
     centers: extraContext?.centers || [],
   }),
   meditation: restoreMove,
 
   meteor: (skill, boardLength, extraContext) => ({
-    pattern: skill.pattern,
+    patterns: [skill.pattern],
     centers: extraContext?.centers || [],
   }),
-  realityDistortion: (skill, boardLength, extraContext) => ({
-    cells: extraContext?.centers || [],
-    color: getRandomColor(),
-  }),
+  realityDistortion: (skill, boardLength, extraContext) => {
+    const cells = extraContext?.cells || [];
+
+    return {
+      cells,
+      colors: generateRandomColors(cells.length, colors),
+    };
+  },
   manaRestore: restoreMove,
 
   arrowShot: (skill, boardLength, extraContext) => ({
-    pattern: skill.pattern,
+    patterns: [skill.pattern],
     centers: extraContext?.centers || [],
   }),
   arrowBarrage: (skill, boardLength, extraContext) => ({
     cells: extraContext?.centers || [],
-    color: null,
+    colors: [null],
   }),
   shadow: restoreMove,
 };

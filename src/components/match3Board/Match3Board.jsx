@@ -1,6 +1,7 @@
 import { useBoard } from "../../hooks/useBoard";
 import { useSelectedCell } from "../../hooks/useSelectedCell";
 import { useSkill } from "../../hooks/useSkill";
+import { useGameMode } from "../../hooks/useGameMode";
 import "./Match3Board.scss";
 
 export default function Match3Board({
@@ -11,18 +12,16 @@ export default function Match3Board({
   movesPerLevel,
   level,
 }) {
-  const {
-    board,
-    movesLeft,
-    collected,
-    levelStatus,
-    handleSwap,
-    updateGameState,
-  } = useBoard(size, targetColor, targetAmount, movesPerLevel);
-
-  const { selectedCell, handleCellClick } = useSelectedCell(handleSwap);
-
-  const { applySkillEffect } = useSkill(updateGameState);
+  const boardApi = useBoard(size, targetColor, targetAmount, movesPerLevel);
+  const skillApi = useSkill(boardApi.updateGameState);
+  const selectedCellApi = useSelectedCell(boardApi.handleSwap);
+  const { mode, onSkillClick, onCellClick, isBoardBlocked } = useGameMode(
+    level,
+    character,
+    boardApi,
+    skillApi,
+    selectedCellApi
+  );
 
   return (
     <div className="match3">
@@ -33,12 +32,14 @@ export default function Match3Board({
         <p>
           Character: {character.name} ({character.class})
         </p>
-        <p>Moves left: {movesLeft}</p>
+        <p>Moves left: {boardApi.movesLeft}</p>
         <p>
-          Collected {targetColor}: {collected}/{targetAmount}
+          Collected {targetColor}: {boardApi.collected}/{targetAmount}
         </p>
-        {levelStatus && (
-          <p className="match3__status">Status: {levelStatus.toUpperCase()}</p>
+        {boardApi.levelStatus && (
+          <p className="match3__status">
+            Status: {boardApi.levelStatus.toUpperCase()}
+          </p>
         )}
       </div>
 
@@ -47,8 +48,8 @@ export default function Match3Board({
           <button
             key={skill.id}
             className="match3__skill-button"
-            disabled={skill.charges <= 0}
-            onClick={() => applySkillEffect(character, skill.id, board, level)}
+            disabled={skill.charges <= 0 || isBoardBlocked}
+            onClick={() => onSkillClick(skill)}
           >
             {skill.name} ({skill.charges})
           </button>
@@ -57,28 +58,30 @@ export default function Match3Board({
 
       <div
         className="match3__board"
-        style={{
-          gridTemplateColumns: `repeat(${size}, 40px)`,
-        }}
+        style={{ gridTemplateColumns: `repeat(${size}, 40px)` }}
       >
-        {board.map((row, rowIndex) =>
+        {boardApi.board.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const isSelected =
-              selectedCell &&
-              selectedCell.row === rowIndex &&
-              selectedCell.col === colIndex;
+              selectedCellApi.selectedCell &&
+              selectedCellApi.selectedCell.row === rowIndex &&
+              selectedCellApi.selectedCell.col === colIndex;
 
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                onClick={() => handleCellClick(rowIndex, colIndex)}
+                onClick={() => onCellClick(rowIndex, colIndex)}
                 className={`match3__cell ${
                   isSelected ? "match3__cell--selected" : ""
                 }`}
                 style={{
                   background: cell.color,
-                  cursor: movesLeft > 0 && !levelStatus ? "pointer" : "default",
-                  opacity: movesLeft > 0 || !levelStatus ? 1 : 0.5,
+                  cursor:
+                    boardApi.movesLeft > 0 && !boardApi.levelStatus
+                      ? "pointer"
+                      : "default",
+                  opacity:
+                    boardApi.movesLeft > 0 || !boardApi.levelStatus ? 1 : 0.5,
                 }}
               />
             );
