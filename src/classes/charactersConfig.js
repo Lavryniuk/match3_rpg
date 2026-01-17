@@ -14,7 +14,8 @@ export const characters = [
         id: "swordStrike",
         name: "Sword Strike",
         charges: 100,
-        pattern: [
+        targetsCount: 1,
+        patterns: [
           [0, 0],
           [0, -1],
           [0, 1],
@@ -26,7 +27,8 @@ export const characters = [
         id: "shieldPulse",
         name: "Shield Pulse",
         charges: 100,
-        pattern: [
+        targetsCount: 2,
+        patterns: [
           [
             [0, 0],
             [0, -1],
@@ -43,7 +45,8 @@ export const characters = [
         id: "meditation",
         name: "Meditation",
         charges: 100,
-        pattern: null,
+        targetsCount: 0,
+        patterns: null,
       },
     ],
   },
@@ -58,7 +61,8 @@ export const characters = [
         id: "meteor",
         name: "Meteor",
         charges: 100,
-        pattern: [
+        targetsCount: 1,
+        patterns: [
           [0, 0],
           [-1, 0],
           [1, 0],
@@ -70,13 +74,15 @@ export const characters = [
         id: "realityDistortion",
         name: "Reality Distortion",
         charges: 100,
-        pattern: null,
+        targetsCount: 5,
+        patterns: null,
       },
       {
         id: "manaRestore",
         name: "Mana Restore",
         charges: 100,
-        pattern: null,
+        targetsCount: 0,
+        patterns: null,
       },
     ],
   },
@@ -91,25 +97,28 @@ export const characters = [
         id: "arrowShot",
         name: "Arrow Shot",
         charges: 100,
-        pattern: [
+        targetsCount: 1,
+        patterns: [
           [0, 0],
           [-1, 0],
           [1, 0],
-          [0, -1],
-          [0, 1],
+          [-2, 0],
+          [2, 0],
         ],
       },
       {
         id: "arrowBarrage",
         name: "Arrow Barrage",
         charges: 100,
-        pattern: null,
+        targetsCount: 5,
+        patterns: null,
       },
       {
         id: "shadow",
         name: "Shadow",
         charges: 100,
-        pattern: null,
+        targetsCount: 0,
+        patterns: null,
       },
     ],
   },

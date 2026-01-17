@@ -5,15 +5,15 @@ import { generateRandomColors } from "../utils/skillUtils";
 import { COLORS as colors } from "../utils/boardUtils";
 
 const singleCenterDestructive = (skill, boardLength) => ({
-  patterns: [skill.pattern],
+  patterns: [skill.patterns],
   centers: [getRandomCell(boardLength)],
 });
 
-const multiPatternDestructive = (skill, boardLength) => {
-  const centers = getRandomCells(boardLength, 2);
+const multiPatternDestructive = (skill, boardLength, targetsCount) => {
+  const centers = getRandomCells(boardLength, targetsCount);
 
   const patterns = centers.map(
-    () => skill.pattern[Math.floor(Math.random() * skill.pattern.length)]
+    () => skill.patterns[Math.floor(Math.random() * skill.patterns.length)]
   );
 
   return {
@@ -26,16 +26,16 @@ const restoreMove = () => ({
   options: { consumesMove: false, grantsMove: 1 },
 });
 
-const entropyRandomColor = (skill, boardLength) => {
-  const cells = getRandomCells(boardLength, 5);
+const entropyRandomColor = (skill, boardLength, targetsCount) => {
+  const cells = getRandomCells(boardLength, targetsCount);
   return {
     cells,
     colors: generateRandomColors(cells.length, colors),
   };
 };
 
-const entropyNullColor = (skill, boardLength) => ({
-  cells: getRandomCells(boardLength, 5),
+const entropyNullColor = (skill, boardLength, targetsCount) => ({
+  cells: getRandomCells(boardLength, targetsCount),
   colors: [null],
 });
 
@@ -57,37 +57,34 @@ export const contextGeneratorsLow = {
 };
 
 export const contextGeneratorsHigh = {
-  swordStrike: (skill, boardLength, extraContext) => ({
-    patterns: [skill.pattern],
+  swordStrike: (skill, boardLength, targetsCount, extraContext) => ({
+    patterns: [skill.patterns],
     centers: extraContext?.centers || [],
   }),
-  shieldPulse: (skill, boardLength, extraContext) => ({
-    patterns: extraContext?.pattern || [],
+  shieldPulse: (skill, boardLength, targetsCount, extraContext) => ({
+    patterns: extraContext?.pattern || [], //todo
     centers: extraContext?.centers || [],
   }),
-  meditation: restoreMove,
 
-  meteor: (skill, boardLength, extraContext) => ({
-    patterns: [skill.pattern],
+  meteor: (skill, boardLength, targetsCount, extraContext) => ({
+    patterns: [skill.patterns],
     centers: extraContext?.centers || [],
   }),
-  realityDistortion: (skill, boardLength, extraContext) => {
-    const cells = extraContext?.cells || [];
+  realityDistortion: (skill, boardLength, targetsCount, extraContext) => {
+    const cells = extraContext?.centers || [];
 
     return {
       cells,
       colors: generateRandomColors(cells.length, colors),
     };
   },
-  manaRestore: restoreMove,
 
-  arrowShot: (skill, boardLength, extraContext) => ({
-    patterns: [skill.pattern],
+  arrowShot: (skill, boardLength, targetsCount, extraContext) => ({
+    patterns: [skill.patterns],
     centers: extraContext?.centers || [],
   }),
-  arrowBarrage: (skill, boardLength, extraContext) => ({
+  arrowBarrage: (skill, boardLength, targetsCount, extraContext) => ({
     cells: extraContext?.centers || [],
     colors: [null],
   }),
-  shadow: restoreMove,
 };
