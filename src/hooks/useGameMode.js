@@ -15,6 +15,7 @@ export function useGameMode(
   const [mode, setMode] = useState("match");
   const [activeSkill, setActiveSkill] = useState(null);
   const [skillTargets, setSkillTargets] = useState([]);
+  const [selectedPatterns, setSelectedPatterns] = useState([]);
 
   const { board } = boardApi;
   const { applySkillEffect } = skillApi;
@@ -52,29 +53,56 @@ export function useGameMode(
       const nextTargets = [...skillTargets, newTarget];
       setSkillTargets(nextTargets);
 
-      if (nextTargets.length < activeSkill.targetsCount) {
+      if (activeSkill.targetsCount > 1 && activeSkill.patterns?.length > 1) {
+        setMode("pattern-selection");
         return;
       }
 
+      if (nextTargets.length === activeSkill.targetsCount) {
+        const context = contextGeneratorsHigh[activeSkill.id](
+          activeSkill,
+          board.length,
+          activeSkill.targetsCount,
+          { centers: nextTargets }
+        );
+
+        applySkillEffect(character, activeSkill.id, board, context);
+        setActiveSkill(null);
+        setSkillTargets([]);
+        setMode("match");
+      }
+    }
+  };
+
+  const onPatternSelect = (pattern) => {
+    const nextPatterns = [...selectedPatterns, pattern];
+    setSelectedPatterns(nextPatterns);
+
+    if (nextPatterns.length === activeSkill.targetsCount) {
       const context = contextGeneratorsHigh[activeSkill.id](
         activeSkill,
         board.length,
-        skill.targetsCount,
-        { centers: nextTargets }
+        activeSkill.targetsCount,
+        { centers: skillTargets, patterns: nextPatterns }
       );
-      console.log("FINAL CONTEXT", context);
+
       applySkillEffect(character, activeSkill.id, board, context);
 
       setActiveSkill(null);
       setSkillTargets([]);
+      setSelectedPatterns([]);
       setMode("match");
+    } else {
+      setMode("skill-targeting");
     }
   };
 
   return {
     mode,
+    activeSkill,
     onSkillClick,
     onCellClick,
+    onPatternSelect,
     isBoardBlocked: mode !== "match",
   };
 }

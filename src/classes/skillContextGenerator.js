@@ -5,7 +5,7 @@ import { generateRandomColors } from "../utils/skillUtils";
 import { COLORS as colors } from "../utils/boardUtils";
 
 const singleCenterDestructive = (skill, boardLength) => ({
-  patterns: [skill.patterns],
+  patterns: skill.patterns,
   centers: [getRandomCell(boardLength)],
 });
 
@@ -58,16 +58,16 @@ export const contextGeneratorsLow = {
 
 export const contextGeneratorsHigh = {
   swordStrike: (skill, boardLength, targetsCount, extraContext) => ({
-    patterns: [skill.patterns],
+    patterns: skill.patterns,
     centers: extraContext?.centers || [],
   }),
   shieldPulse: (skill, boardLength, targetsCount, extraContext) => ({
-    patterns: extraContext?.pattern || [], //todo
+    patterns: extraContext?.patterns || [],
     centers: extraContext?.centers || [],
   }),
 
   meteor: (skill, boardLength, targetsCount, extraContext) => ({
-    patterns: [skill.patterns],
+    patterns: skill.patterns,
     centers: extraContext?.centers || [],
   }),
   realityDistortion: (skill, boardLength, targetsCount, extraContext) => {
@@ -80,7 +80,7 @@ export const contextGeneratorsHigh = {
   },
 
   arrowShot: (skill, boardLength, targetsCount, extraContext) => ({
-    patterns: [skill.patterns],
+    patterns: skill.patterns,
     centers: extraContext?.centers || [],
   }),
   arrowBarrage: (skill, boardLength, targetsCount, extraContext) => ({

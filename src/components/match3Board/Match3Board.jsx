@@ -15,13 +15,14 @@ export default function Match3Board({
   const boardApi = useBoard(size, targetColor, targetAmount, movesPerLevel);
   const skillApi = useSkill(boardApi.updateGameState);
   const selectedCellApi = useSelectedCell(boardApi.handleSwap);
-  const { mode, onSkillClick, onCellClick, isBoardBlocked } = useGameMode(
-    level,
-    character,
-    boardApi,
-    skillApi,
-    selectedCellApi
-  );
+  const {
+    mode,
+    activeSkill,
+    onSkillClick,
+    onCellClick,
+    onPatternSelect,
+    isBoardBlocked,
+  } = useGameMode(level, character, boardApi, skillApi, selectedCellApi);
 
   return (
     <div className="match3">
@@ -88,6 +89,23 @@ export default function Match3Board({
           })
         )}
       </div>
+
+      {mode === "pattern-selection" && activeSkill.patterns && (
+        <div className="match3__pattern-modal">
+          <h3 className="match3__pattern-title">Select a pattern</h3>
+          <div className="match3__pattern-buttons">
+            {activeSkill.patterns.map((pattern, index) => (
+              <button
+                key={index}
+                onClick={() => onPatternSelect(pattern)}
+                className="match3__pattern-button"
+              >
+                Pattern {index + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
