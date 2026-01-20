@@ -64,18 +64,20 @@ export function useBoard(
     if (nextCollected >= targetAmount) nextLevelStatus = "won";
     else if (nextMoves <= 0) nextLevelStatus = "lost";
 
+    let finalBoard = resolvedBoard;
+
     if (!BoardUtils.hasAvailableMoves(resolvedBoard)) {
       const shuffled = BoardUtils.shuffleBoard(resolvedBoard);
       finalBoard = BoardUtils.resolveBoard(shuffled).board;
     }
 
     //test
-    const matchResult = BoardUtils.checkMatches(resolvedBoard);
+    const matchResult = BoardUtils.checkMatches(finalBoard);
     console.log(matchResult.hasMatches);
 
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
-    setBoard(resolvedBoard);
+    setBoard(finalBoard);
     if (nextLevelStatus) setLevelStatus(nextLevelStatus);
   }
 
