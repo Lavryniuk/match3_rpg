@@ -78,7 +78,10 @@ export function useBoard(
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
     setBoard(finalBoard);
-    if (nextLevelStatus) setLevelStatus(nextLevelStatus);
+    if (nextLevelStatus) {
+      setLevelStatus(nextLevelStatus);
+      return;
+    }
   }
 
   return {

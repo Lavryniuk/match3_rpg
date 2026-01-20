@@ -49,7 +49,9 @@ export default function Match3Board({
           <button
             key={skill.id}
             className="match3__skill-button"
-            disabled={skill.charges <= 0 || isBoardBlocked}
+            disabled={
+              skill.charges <= 0 || isBoardBlocked || boardApi.levelStatus
+            }
             onClick={() => onSkillClick(skill)}
           >
             {skill.name} ({skill.charges})
