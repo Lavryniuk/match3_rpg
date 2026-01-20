@@ -7,6 +7,8 @@ export const COLORS = [
   "orange",
   "pink",
   "brown",
+  "lime",
+  "black",
 ];
 
 // random color, excluding given ones
@@ -169,7 +171,7 @@ export function applyGravity(board) {
 }
 
 //questions?
-export function hasAvailableMoves(board) {
+export function findAvailableMoves(board) {
   const size = board.length;
 
   for (let row = 0; row < size; row++) {
@@ -190,14 +192,18 @@ export function hasAvailableMoves(board) {
             { row: newRow, col: newCol }
           );
           if (hasAnyMatches(swappedBoard)) {
-            return true;
+            return {
+              hasMoves: true,
+              from: { row, col },
+              to: { row: newRow, col: newCol },
+            };
           }
         }
       }
     }
   }
 
-  return false;
+  return { hasMoves: false, from: null, to: null };
 }
 
 // shuffle board with no matches to have available moves
@@ -217,7 +223,7 @@ export function shuffleBoard(board) {
       }
       newBoard.push(newRow);
     }
-  } while (!hasAvailableMoves(newBoard));
+  } while (!findAvailableMoves(newBoard).hasMoves);
 
   return newBoard;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as BoardUtils from "../utils/boardUtils";
 
 export function useBoard(
@@ -10,9 +10,12 @@ export function useBoard(
   const [board, setBoard] = useState(() => {
     let newBoard = BoardUtils.createBoard(size);
 
-    while (!BoardUtils.hasAvailableMoves(newBoard)) {
+    let hasAvailableMoves = BoardUtils.findAvailableMoves(newBoard);
+
+    while (!hasAvailableMoves.hasMoves) {
       newBoard = BoardUtils.shuffleBoard(newBoard);
       newBoard = BoardUtils.resolveBoard(newBoard).board;
+      hasAvailableMoves = BoardUtils.findAvailableMoves(newBoard);
     }
 
     return newBoard;
@@ -21,6 +24,30 @@ export function useBoard(
   const [movesLeft, setMovesLeft] = useState(moves);
   const [collected, setCollected] = useState(0);
   const [levelStatus, setLevelStatus] = useState(null);
+  const [hintCells, setHintCells] = useState(null);
+
+  useEffect(() => {
+    let showHintTimer, hideHintTimer;
+
+    const interval = setInterval(() => {
+      const move = BoardUtils.findAvailableMoves(board);
+
+      if (move.hasMoves) {
+        showHintTimer = setTimeout(() => {
+          setHintCells({ from: move.from, to: move.to });
+        }, 5000);
+        hideHintTimer = setTimeout(() => {
+          setHintCells(null);
+        }, 7000);
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(showHintTimer);
+      clearTimeout(hideHintTimer);
+    };
+  }, [board]);
 
   function handleSwap(selectedCell, row, col) {
     if (levelStatus) return;
@@ -66,7 +93,9 @@ export function useBoard(
 
     let finalBoard = resolvedBoard;
 
-    if (!BoardUtils.hasAvailableMoves(resolvedBoard)) {
+    const move = BoardUtils.findAvailableMoves(resolvedBoard);
+
+    if (!move.hasMoves) {
       const shuffled = BoardUtils.shuffleBoard(resolvedBoard);
       finalBoard = BoardUtils.resolveBoard(shuffled).board;
     }
@@ -90,6 +119,7 @@ export function useBoard(
     movesLeft,
     collected,
     levelStatus,
+    hintCells,
     updateGameState,
   };
 }

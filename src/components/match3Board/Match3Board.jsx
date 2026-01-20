@@ -70,21 +70,27 @@ export default function Match3Board({
               selectedCellApi.selectedCell.row === rowIndex &&
               selectedCellApi.selectedCell.col === colIndex;
 
+            const isHinted =
+              boardApi.hintCells &&
+              ((boardApi.hintCells.from.row === rowIndex &&
+                boardApi.hintCells.from.col === colIndex) ||
+                (boardApi.hintCells.to.row === rowIndex &&
+                  boardApi.hintCells.to.col === colIndex));
+
+            const isDisabled = boardApi.movesLeft <= 0 && boardApi.levelStatus;
+
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 onClick={() => onCellClick(rowIndex, colIndex)}
-                className={`match3__cell ${
-                  isSelected ? "match3__cell--selected" : ""
-                }`}
+                className={`
+                  match3__cell
+                  ${isSelected ? "match3__cell__selected" : ""}
+                  ${isHinted ? "match3__cell__hinted" : ""}
+                  ${isDisabled ? "match3__cell__disabled" : ""}
+                `}
                 style={{
                   background: cell.color,
-                  cursor:
-                    boardApi.movesLeft > 0 && !boardApi.levelStatus
-                      ? "pointer"
-                      : "default",
-                  opacity:
-                    boardApi.movesLeft > 0 || !boardApi.levelStatus ? 1 : 0.5,
                 }}
               />
             );
