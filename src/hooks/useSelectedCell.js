@@ -2,7 +2,6 @@ import { useState } from "react";
 
 export function useSelectedCell(onPairReady) {
   const [selectedCell, setSelectedCell] = useState(null);
-  console.log(selectedCell);
 
   function handleCellClick(row, col) {
     if (!selectedCell) {

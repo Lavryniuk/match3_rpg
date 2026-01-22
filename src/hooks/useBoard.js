@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as BoardUtils from "../utils/boardUtils";
 
 export function useBoard(
@@ -26,32 +26,83 @@ export function useBoard(
   const [levelStatus, setLevelStatus] = useState(null);
   const [hintCells, setHintCells] = useState(null);
 
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
+
+  const [gamePhase, setGamePhase] = useState("idle");
+  console.log(gamePhase);
+
+  const animationsCountRef = useRef(0);
+  console.log(animationsCountRef);
+
+  const animationOwnerRef = useRef(null);
+
+  const hintShowTimer = useRef(null);
+  const hintHideTimer = useRef(null);
+
   useEffect(() => {
-    let showHintTimer, hideHintTimer;
+    if (gamePhase !== "hinted" || !hasUserInteracted || levelStatus) return;
+    console.log("effect start");
 
-    const interval = setInterval(() => {
+    hintShowTimer.current = setTimeout(() => {
       const move = BoardUtils.findAvailableMoves(board);
+      if (!move.hasMoves) return;
 
-      if (move.hasMoves) {
-        showHintTimer = setTimeout(() => {
-          setHintCells({ from: move.from, to: move.to });
-        }, 5000);
-        hideHintTimer = setTimeout(() => {
-          setHintCells(null);
-        }, 7000);
-      }
-    }, 10000);
+      setHintCells({ from: move.from, to: move.to });
+
+      hintHideTimer.current = setTimeout(() => {
+        setHintCells(null);
+      }, 3100);
+    }, 5000);
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(showHintTimer);
-      clearTimeout(hideHintTimer);
+      clearTimeout(hintShowTimer.current);
+      clearTimeout(hintHideTimer.current);
     };
-  }, [board]);
+  }, [gamePhase]);
+
+  function onAnimationStart() {
+    animationsCountRef.current += 1;
+    setGamePhase("animating");
+  }
+
+  function onAnimationEnd() {
+    animationsCountRef.current -= 1;
+
+    if (animationsCountRef.current > 0) return;
+
+    animationsCountRef.current = 0;
+
+    if (animationOwnerRef.current === "finished") {
+      setIsResolving(false);
+      setGamePhase("finished");
+      animationOwnerRef.current = null;
+      return;
+    }
+
+    if (animationOwnerRef.current === "resolving") {
+      animationOwnerRef.current = "hint";
+      setIsResolving(false);
+      setGamePhase("hinted");
+      return;
+    }
+
+    if (animationOwnerRef.current === "hint") {
+      animationOwnerRef.current = null;
+      setGamePhase("idle");
+    }
+  }
 
   function handleSwap(selectedCell, row, col) {
     if (levelStatus) return;
     if (movesLeft <= 0) return;
+
+    if (!hasUserInteracted) {
+      setHasUserInteracted(true);
+    }
+    setGamePhase("action");
+    animationOwnerRef.current = "resolving";
+    setIsResolving(true);
 
     const swappedBoard = BoardUtils.swapCells(board, selectedCell, {
       row,
@@ -109,7 +160,7 @@ export function useBoard(
     setBoard(finalBoard);
     if (nextLevelStatus) {
       setLevelStatus(nextLevelStatus);
-      return;
+      animationOwnerRef.current = "finished";
     }
   }
 
@@ -121,5 +172,9 @@ export function useBoard(
     levelStatus,
     hintCells,
     updateGameState,
+    onAnimationStart,
+    onAnimationEnd,
+    gamePhase,
+    isResolving,
   };
 }

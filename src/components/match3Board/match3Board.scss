@@ -56,13 +56,17 @@
       border: 3px solid white;
     }
 
+    &__resolving {
+      animation: triggerAnimation 0.3s linear;
+    }
+
     &__disabled {
       cursor: default;
       opacity: 0.5;
     }
 
     &__hinted {
-      animation: pulse 1s ease-in-out infinite;
+      animation: pulse 1s ease-in-out 3;
     }
   }
 
@@ -75,6 +79,15 @@
     50% {
       transform: scale(1.1);
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  @keyframes triggerAnimation {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
     }
   }
 

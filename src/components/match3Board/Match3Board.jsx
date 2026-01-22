@@ -77,7 +77,9 @@ export default function Match3Board({
                 (boardApi.hintCells.to.row === rowIndex &&
                   boardApi.hintCells.to.col === colIndex));
 
-            const isDisabled = boardApi.movesLeft <= 0 && boardApi.levelStatus;
+            const isResolving = boardApi.isResolving;
+
+            const isDisabled = boardApi.movesLeft <= 0 || boardApi.levelStatus;
 
             return (
               <div
@@ -87,8 +89,19 @@ export default function Match3Board({
                   match3__cell
                   ${isSelected ? "match3__cell__selected" : ""}
                   ${isHinted ? "match3__cell__hinted" : ""}
+                  ${isResolving ? "match3__cell__resolving" : ""}
                   ${isDisabled ? "match3__cell__disabled" : ""}
                 `}
+                onAnimationStart={() => {
+                  if (isResolving || isHinted) {
+                    boardApi.onAnimationStart();
+                  }
+                }}
+                onAnimationEnd={() => {
+                  if (isResolving || isHinted) {
+                    boardApi.onAnimationEnd();
+                  }
+                }}
                 style={{
                   background: cell.color,
                 }}
