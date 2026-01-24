@@ -30,48 +30,56 @@ export function useBoard(
   const [isResolving, setIsResolving] = useState(false);
 
   const [gamePhase, setGamePhase] = useState("idle");
-  console.log(gamePhase);
 
-  const animationsCountRef = useRef(0);
-  console.log(animationsCountRef);
+  const resolveAnimationsRef = useRef(0);
+  const hintAnimationsRef = useRef(0);
 
   const animationOwnerRef = useRef(null);
 
   const hintShowTimer = useRef(null);
-  const hintHideTimer = useRef(null);
 
   useEffect(() => {
-    if (gamePhase !== "hinted" || !hasUserInteracted || levelStatus) return;
-    console.log("effect start");
+    if (gamePhase !== "hinted") return;
+    if (!hasUserInteracted || levelStatus) return;
 
     hintShowTimer.current = setTimeout(() => {
       const move = BoardUtils.findAvailableMoves(board);
       if (!move.hasMoves) return;
 
       setHintCells({ from: move.from, to: move.to });
-
-      hintHideTimer.current = setTimeout(() => {
-        setHintCells(null);
-      }, 3100);
-    }, 5000);
+    }, 8000);
 
     return () => {
       clearTimeout(hintShowTimer.current);
-      clearTimeout(hintHideTimer.current);
     };
   }, [gamePhase]);
 
   function onAnimationStart() {
-    animationsCountRef.current += 1;
+    if (animationOwnerRef.current === "resolving") {
+      resolveAnimationsRef.current += 1;
+    }
+
+    if (animationOwnerRef.current === "hint") {
+      hintAnimationsRef.current += 1;
+    }
+
     setGamePhase("animating");
   }
 
   function onAnimationEnd() {
-    animationsCountRef.current -= 1;
+    if (animationOwnerRef.current === "resolving") {
+      resolveAnimationsRef.current -= 1;
+    }
 
-    if (animationsCountRef.current > 0) return;
+    if (animationOwnerRef.current === "hint") {
+      hintAnimationsRef.current -= 1;
+    }
 
-    animationsCountRef.current = 0;
+    if (resolveAnimationsRef.current > 0 || hintAnimationsRef.current > 0)
+      return;
+
+    resolveAnimationsRef.current = 0;
+    hintAnimationsRef.current = 0;
 
     if (animationOwnerRef.current === "finished") {
       setIsResolving(false);
@@ -93,16 +101,28 @@ export function useBoard(
     }
   }
 
+  // FSM stays in "action" until animationEnd resets it; even if a cell click or skill is cancelled, it only changes after a userAction triggers an animation.
+  function interruptHint() {
+    if (!hasUserInteracted) {
+      setHasUserInteracted(true);
+    }
+
+    setGamePhase("action");
+
+    if (animationOwnerRef.current === "hint") {
+      animationOwnerRef.current = null;
+      hintAnimationsRef.current = 0;
+      setHintCells(null);
+    }
+
+    animationOwnerRef.current = "resolving";
+  }
+
   function handleSwap(selectedCell, row, col) {
     if (levelStatus) return;
     if (movesLeft <= 0) return;
 
-    if (!hasUserInteracted) {
-      setHasUserInteracted(true);
-    }
-    setGamePhase("action");
-    animationOwnerRef.current = "resolving";
-    setIsResolving(true);
+    interruptHint();
 
     const swappedBoard = BoardUtils.swapCells(board, selectedCell, {
       row,
@@ -119,14 +139,10 @@ export function useBoard(
 
   function updateGameState(collectedOverride = null, rawBoard, options = {}) {
     const { consumesMove = true, grantsMove = 0 } = options;
-    console.log(rawBoard);
     const boardAfterGravity = BoardUtils.applyGravity(rawBoard);
-    console.log(boardAfterGravity);
 
     const { board: resolvedBoard, removed } =
       BoardUtils.resolveBoard(boardAfterGravity);
-    console.log(resolvedBoard);
-    console.log(removed);
 
     const collectedThisMove =
       collectedOverride !== null
@@ -151,13 +167,10 @@ export function useBoard(
       finalBoard = BoardUtils.resolveBoard(shuffled).board;
     }
 
-    //test
-    const matchResult = BoardUtils.checkMatches(finalBoard);
-    console.log(matchResult.hasMatches);
-
     setCollected(nextCollected);
     setMovesLeft(nextMoves);
     setBoard(finalBoard);
+    setIsResolving(true);
     if (nextLevelStatus) {
       setLevelStatus(nextLevelStatus);
       animationOwnerRef.current = "finished";
@@ -176,5 +189,6 @@ export function useBoard(
     onAnimationEnd,
     gamePhase,
     isResolving,
+    interruptHint,
   };
 }

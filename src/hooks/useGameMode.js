@@ -22,6 +22,7 @@ export function useGameMode(
   const { handleCellClick } = selectedCellApi;
 
   const onSkillClick = (skill) => {
+    boardApi.interruptHint();
     if (level <= 30 || skill.targetsCount === 0) {
       const context = contextGeneratorsLow[skill.id](
         skill,
@@ -37,6 +38,7 @@ export function useGameMode(
   };
 
   const onCellClick = (row, col) => {
+    boardApi.interruptHint();
     if (mode === "match") {
       handleCellClick(row, col);
       return;
