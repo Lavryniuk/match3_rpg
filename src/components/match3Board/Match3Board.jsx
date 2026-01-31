@@ -3,6 +3,7 @@ import { useSelectedCell } from "../../hooks/useSelectedCell";
 import { useSkill } from "../../hooks/useSkill";
 import { useGameMode } from "../../hooks/useGameMode";
 import "./Match3Board.scss";
+import { useAnimationsFSM } from "../../hooks/useAnimationsFSM";
 
 export default function Match3Board({
   character,
@@ -13,7 +14,7 @@ export default function Match3Board({
   level,
 }) {
   const boardApi = useBoard(size, targetColor, targetAmount, movesPerLevel);
-  const skillApi = useSkill(boardApi.updateGameState);
+  const skillApi = useSkill(boardApi.applyUpdateGameState);
   const selectedCellApi = useSelectedCell(boardApi.handleSwap);
   const {
     mode,

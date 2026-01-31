@@ -1,6 +1,6 @@
 import { canUseSkill, getSkill } from "../utils/skillUtils";
 
-export function useSkill(updateGameState) {
+export function useSkill(applyUpdateGameState) {
   const applySkillEffect = (character, skillId, board, context) => {
     const skill = getSkill(character, skillId);
     if (!skill || !canUseSkill(character, skillId)) return board;
@@ -11,7 +11,7 @@ export function useSkill(updateGameState) {
 
     skill.charges -= 1;
 
-    updateGameState(null, newBoard, context.options);
+    applyUpdateGameState(null, newBoard, context.options);
 
     return newBoard;
   };
