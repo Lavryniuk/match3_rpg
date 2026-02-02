@@ -2,6 +2,7 @@ import { useState } from "react";
 import MapRoad from "./components/mapRoad/MapRoad";
 import Match3Board from "./components/match3Board/Match3Board";
 import LevelAndCharacterModal from "./components/levelAndCharacterModal/LevelAndCharacterModal";
+import { levels } from "./data/levels";
 
 function App() {
   const [showLevelModal, setShowLevelModal] = useState(false);
@@ -43,10 +44,7 @@ function App() {
       {selectedCharacter && !showLevelModal && (
         <Match3Board
           character={selectedCharacter}
-          size={8}
-          targetColor="red"
-          targetAmount={20}
-          movesPerLevel={100}
+          params={levels[levelNumber]}
           level={levelNumber}
         />
       )}

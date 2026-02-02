@@ -6,14 +6,12 @@ import { updateGameState } from "../utils/updateGameState";
 import { useAnimationsFSM } from "./useAnimationsFSM";
 import { useBoardActions } from "./useBoardActions";
 
-export function useBoard(
-  size = 8,
-  targetColor = "red",
-  targetAmount = 10,
-  moves = 100
-) {
+export function useBoard(params = {}) {
+  const { targetColor, targetAmount, moves } = params;
+
   const [board, setBoard] = useState(() => {
-    let newBoard = BoardUtils.createBoard(size);
+    const mask = params.mask;
+    let newBoard = BoardUtils.createBoardFromMask(mask);
 
     let hasAvailableMoves = BoardUtils.findAvailableMoves(newBoard);
 
@@ -25,6 +23,7 @@ export function useBoard(
 
     return newBoard;
   });
+  console.log(board);
 
   const [movesLeft, setMovesLeft] = useState(moves);
   const [collected, setCollected] = useState(0);

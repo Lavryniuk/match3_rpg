@@ -18,22 +18,45 @@ export function getRandomColor(excludedColors = []) {
 }
 
 // create board without starting matches
-export function createBoard(size) {
-  const board = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => ({ color: null }))
-  );
+export function createBoardFromMask(mask) {
+  const board = [];
 
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
-      const excludedColors = [];
-      if (col >= 2 && board[row][col - 1].color === board[row][col - 2].color) {
-        excludedColors.push(board[row][col - 1].color);
+  for (let row = 0; row < mask.length; row++) {
+    const rowArr = [];
+
+    for (let col = 0; col < mask[row].length; col++) {
+      if (mask[row][col] === "1") {
+        const excludedColors = [];
+
+        if (
+          col >= 2 &&
+          rowArr[col - 1] &&
+          rowArr[col - 2] &&
+          rowArr[col - 1].color === rowArr[col - 2].color
+        ) {
+          excludedColors.push(rowArr[col - 1].color);
+        }
+
+        if (
+          row >= 2 &&
+          board[row - 1][col] &&
+          board[row - 2][col] &&
+          board[row - 1][col].color === board[row - 2][col].color
+        ) {
+          excludedColors.push(board[row - 1][col].color);
+        }
+
+        rowArr.push({
+          row,
+          col,
+          color: getRandomColor(excludedColors),
+        });
+      } else {
+        rowArr.push({ blocked: true });
       }
-      if (row >= 2 && board[row - 1][col].color === board[row - 2][col].color) {
-        excludedColors.push(board[row - 1][col].color);
-      }
-      board[row][col].color = getRandomColor(excludedColors);
     }
+
+    board.push(rowArr);
   }
 
   return board;
@@ -43,86 +66,95 @@ export function createBoard(size) {
 export function swapCells(board, cellA, cellB) {
   const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
   const temp = newBoard[cellA.row][cellA.col];
+
+  if (
+    newBoard[cellA.row][cellA.col].blocked ||
+    newBoard[cellB.row][cellB.col].blocked
+  )
+    return board;
+
   newBoard[cellA.row][cellA.col] = newBoard[cellB.row][cellB.col];
   newBoard[cellB.row][cellB.col] = temp;
+
   return newBoard;
 }
 
 // check matches and remove them
 export function checkMatches(board) {
-  const size = board.length;
+  const numRows = board.length;
+  const numCols = board[0].length;
   const toRemove = new Set();
 
-  // horizontal
-  for (let row = 0; row < size; row++) {
-    let count = 1;
-    for (let col = 1; col < size; col++) {
-      const curr = board[row][col].color;
-      const prev = board[row][col - 1].color;
-      if (curr && curr === prev) {
-        count++;
-      } else {
-        if (count >= 3) {
-          for (let k = 0; k < count; k++) {
-            toRemove.add(
-              JSON.stringify({
-                row,
-                col: col - 1 - k,
-                color: board[row][col - 1 - k].color,
-              })
-            );
-          }
-        }
-        count = 1;
-      }
-    }
-    if (count >= 3) {
+  function commitSequence(count, row, col, direction) {
+    if (count < 3) return;
+
+    if (direction === "horizontal") {
       for (let k = 0; k < count; k++) {
         toRemove.add(
           JSON.stringify({
             row,
-            col: size - 1 - k,
-            color: board[row][size - 1 - k].color,
+            col: col - k,
+            color: board[row][col - k].color,
+          })
+        );
+      }
+    } else {
+      for (let k = 0; k < count; k++) {
+        toRemove.add(
+          JSON.stringify({
+            row: row - k,
+            col,
+            color: board[row - k][col].color,
           })
         );
       }
     }
   }
 
-  // vertical
-  for (let col = 0; col < size; col++) {
+  // horizontal
+  for (let row = 0; row < numRows; row++) {
     let count = 1;
-    for (let row = 1; row < size; row++) {
-      const curr = board[row][col].color;
-      const prev = board[row - 1][col].color;
-      if (curr && curr === prev) {
+    for (let col = 1; col < numCols; col++) {
+      const curr = board[row][col];
+      const prev = board[row][col - 1];
+
+      if (prev.blocked || curr.blocked) {
+        commitSequence(count, row, col - 1, "horizontal");
+        count = 1;
+        continue;
+      }
+
+      if (curr.color && curr.color === prev.color) {
         count++;
       } else {
-        if (count >= 3) {
-          for (let k = 0; k < count; k++) {
-            toRemove.add(
-              JSON.stringify({
-                row: row - 1 - k,
-                col,
-                color: board[row - 1 - k][col].color,
-              })
-            );
-          }
-        }
+        commitSequence(count, row, col - 1, "horizontal");
         count = 1;
       }
     }
-    if (count >= 3) {
-      for (let k = 0; k < count; k++) {
-        toRemove.add(
-          JSON.stringify({
-            row: size - 1 - k,
-            col,
-            color: board[size - 1 - k][col].color,
-          })
-        );
+    commitSequence(count, row, numCols - 1, "horizontal");
+  }
+
+  // vertical
+  for (let col = 0; col < numCols; col++) {
+    let count = 1;
+    for (let row = 1; row < numRows; row++) {
+      const curr = board[row][col];
+      const prev = board[row - 1][col];
+
+      if (prev.blocked || curr.blocked) {
+        commitSequence(count, row - 1, col, "vertical");
+        count = 1;
+        continue;
+      }
+
+      if (curr.color && curr.color === prev.color) {
+        count++;
+      } else {
+        commitSequence(count, row - 1, col, "vertical");
+        count = 1;
       }
     }
+    commitSequence(count, numRows - 1, col, "vertical");
   }
 
   if (toRemove.size === 0) return { board, hasMatches: false, removed: [] };
@@ -147,19 +179,28 @@ export function hasAnyMatches(board) {
 
 // gravity
 export function applyGravity(board) {
-  const size = board.length;
+  const numRows = board.length;
+  const numCols = board[0].length;
+
   const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
 
-  for (let col = 0; col < size; col++) {
-    for (let row = size - 1; row >= 0; row--) {
+  for (let col = 0; col < numCols; col++) {
+    for (let row = numRows - 1; row >= 0; row--) {
+      if (newBoard[row][col].blocked) {
+        continue;
+      }
+
       if (!newBoard[row][col].color) {
         let r = row - 1;
         while (r >= 0 && !newBoard[r][col].color) r--;
+
         if (r >= 0) {
           newBoard[row][col] = newBoard[r][col];
           newBoard[r][col] = { color: null };
         } else {
           newBoard[row][col] = {
+            row,
+            col,
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
           };
         }
@@ -172,10 +213,11 @@ export function applyGravity(board) {
 
 //questions?
 export function findAvailableMoves(board) {
-  const size = board.length;
+  const numRows = board.length;
+  const numCols = board[0].length;
 
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
       const directions = [
         { rowOffset: 0, colOffset: 1 },
         { rowOffset: 1, colOffset: 0 },
@@ -185,7 +227,7 @@ export function findAvailableMoves(board) {
         const newRow = row + rowOffset;
         const newCol = col + colOffset;
 
-        if (newRow < size && newCol < size) {
+        if (newRow < numRows && newCol < numCols) {
           const swappedBoard = swapCells(
             board,
             { row, col },
@@ -208,18 +250,37 @@ export function findAvailableMoves(board) {
 
 // shuffle board with no matches to have available moves
 export function shuffleBoard(board) {
-  const size = board.length;
-  const allColors = board.flat().map((cell) => cell.color);
+  const numRows = board.length;
+  const numCols = board[0].length;
+
+  const allColors = board
+    .flat()
+    .filter((cell) => !cell.blocked)
+    .map((cell) => cell.color);
+  console.log(numRows * numCols, allColors.length);
 
   let newBoard = [];
   do {
     const shuffledColors = fisherShuffle(allColors);
 
+    let colorCount = 0;
+
     newBoard = [];
-    for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+    for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
       const newRow = [];
-      for (let colIndex = 0; colIndex < size; colIndex++) {
-        newRow.push({ color: shuffledColors[rowIndex * size + colIndex] });
+      for (let colIndex = 0; colIndex < numCols; colIndex++) {
+        const cell = board[rowIndex][colIndex];
+
+        if (cell.blocked) {
+          newRow.push({ ...cell });
+        } else {
+          newRow.push({
+            row: rowIndex,
+            col: colIndex,
+            color: shuffledColors[colorCount],
+          });
+          colorCount++;
+        }
       }
       newBoard.push(newRow);
     }

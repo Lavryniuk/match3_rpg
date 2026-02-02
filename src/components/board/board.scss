@@ -1,0 +1,8 @@
+.match3 {
+  &__board {
+    display: grid;
+    gap: 4px;
+    z-index: 1;
+    position: absolute;
+  }
+}

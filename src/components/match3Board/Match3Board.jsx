@@ -3,17 +3,12 @@ import { useSelectedCell } from "../../hooks/useSelectedCell";
 import { useSkill } from "../../hooks/useSkill";
 import { useGameMode } from "../../hooks/useGameMode";
 import "./Match3Board.scss";
-import { useAnimationsFSM } from "../../hooks/useAnimationsFSM";
 
-export default function Match3Board({
-  character,
-  size,
-  targetColor,
-  targetAmount,
-  movesPerLevel,
-  level,
-}) {
-  const boardApi = useBoard(size, targetColor, targetAmount, movesPerLevel);
+import Board from "../board/Board";
+import BoardBackground from "../boardBackground/BoardBackground";
+
+export default function Match3Board({ character, params, level }) {
+  const boardApi = useBoard(params);
   const skillApi = useSkill(boardApi.applyUpdateGameState);
   const selectedCellApi = useSelectedCell(boardApi.handleSwap);
   const {
@@ -36,7 +31,8 @@ export default function Match3Board({
         </p>
         <p>Moves left: {boardApi.movesLeft}</p>
         <p>
-          Collected {targetColor}: {boardApi.collected}/{targetAmount}
+          Collected {params.targetColor}: {boardApi.collected}/
+          {params.targetAmount}
         </p>
         {boardApi.levelStatus && (
           <p className="match3__status">
@@ -60,56 +56,13 @@ export default function Match3Board({
         ))}
       </div>
 
-      <div
-        className="match3__board"
-        style={{ gridTemplateColumns: `repeat(${size}, 40px)` }}
-      >
-        {boardApi.board.map((row, rowIndex) =>
-          row.map((cell, colIndex) => {
-            const isSelected =
-              selectedCellApi.selectedCell &&
-              selectedCellApi.selectedCell.row === rowIndex &&
-              selectedCellApi.selectedCell.col === colIndex;
-
-            const isHinted =
-              boardApi.hintCells &&
-              ((boardApi.hintCells.from.row === rowIndex &&
-                boardApi.hintCells.from.col === colIndex) ||
-                (boardApi.hintCells.to.row === rowIndex &&
-                  boardApi.hintCells.to.col === colIndex));
-
-            const isResolving = boardApi.isResolving;
-
-            const isDisabled = boardApi.movesLeft <= 0 || boardApi.levelStatus;
-
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                onClick={() => onCellClick(rowIndex, colIndex)}
-                className={`
-                  match3__cell
-                  ${isSelected ? "match3__cell__selected" : ""}
-                  ${isHinted ? "match3__cell__hinted" : ""}
-                  ${isResolving ? "match3__cell__resolving" : ""}
-                  ${isDisabled ? "match3__cell__disabled" : ""}
-                `}
-                onAnimationStart={() => {
-                  if (isResolving || isHinted) {
-                    boardApi.onAnimationStart();
-                  }
-                }}
-                onAnimationEnd={() => {
-                  if (isResolving || isHinted) {
-                    boardApi.onAnimationEnd();
-                  }
-                }}
-                style={{
-                  background: cell.color,
-                }}
-              />
-            );
-          })
-        )}
+      <div className="match3Board" style={{ position: "relative" }}>
+        <BoardBackground mask={params.mask} />
+        <Board
+          boardApi={boardApi}
+          selectedCellApi={selectedCellApi}
+          onCellClick={onCellClick}
+        />
       </div>
 
       {mode === "pattern-selection" && activeSkill.patterns && (
