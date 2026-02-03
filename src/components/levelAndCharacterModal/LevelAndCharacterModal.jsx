@@ -22,7 +22,12 @@ export default function LevelAndCharacterModal({
 
         <div className="level-modal__characters">
           {characters.map((char) => (
-            <button key={char.id} onClick={() => onCharacterSelect(char)}>
+            <button
+              className="level-modal__character"
+              style={{ backgroundImage: `url(${char.avatar})` }}
+              key={char.id}
+              onClick={() => onCharacterSelect(char)}
+            >
               {char.class}
             </button>
           ))}

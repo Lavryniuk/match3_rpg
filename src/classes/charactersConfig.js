@@ -2,12 +2,16 @@ import Paladin from "./Paladin";
 import Sorceress from "./Sorceress";
 import Archer from "./Archer";
 
+import sorceressAvatar from "../assets/avatars/sorceress.png";
+import paladinAvatar from "../assets/avatars/paladin.png";
+import archerAvatar from "../assets/avatars/archer.png";
+
 export const characters = [
   {
     id: "paladin",
     name: "Lucian",
     class: "Paladin",
-    avatar: "../assets/avatars/paladin.png",
+    avatar: paladinAvatar,
     classRef: Paladin,
     skills: [
       {
@@ -56,7 +60,7 @@ export const characters = [
     id: "sorceress",
     name: "Cortana",
     class: "Sorceress",
-    avatar: "../assets/avatars/sorceress.png",
+    avatar: sorceressAvatar,
     classRef: Sorceress,
     skills: [
       {
@@ -94,7 +98,7 @@ export const characters = [
     id: "archer",
     name: "Elandor",
     class: "Archer",
-    avatar: "../assets/avatars/archer.png",
+    avatar: archerAvatar,
     classRef: Archer,
     skills: [
       {

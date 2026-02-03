@@ -1,3 +1,4 @@
+import { GEMS } from "../../data/gems";
 import "./cell.scss";
 
 export default function Cell({
@@ -23,6 +24,8 @@ export default function Cell({
 
   const isDisabled = boardApi.movesLeft <= 0 || boardApi.levelStatus;
 
+  const sprite = GEMS[cell.color].sprite;
+
   return (
     <div
       onClick={() => onCellClick(row, col)}
@@ -44,7 +47,7 @@ export default function Cell({
         }
       }}
       style={{
-        background: cell.color,
+        backgroundImage: `url(${sprite})`,
       }}
     />
   );

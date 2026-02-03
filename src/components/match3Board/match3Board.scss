@@ -1,5 +1,11 @@
 .match3 {
   padding: 20px;
+  min-height: 91vh;
+  width: 92%;
+  background-image: url("../../assets/bg/6674f0cdb5b7b401612cf065_noise-50.avif");
+  background-size: auto;
+  background-repeat: repeat;
+  background-position: top left;
 
   &__title {
     font-size: 28px;

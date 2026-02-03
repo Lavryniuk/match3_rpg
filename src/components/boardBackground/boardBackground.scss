@@ -3,18 +3,18 @@
   top: 0;
   left: 0;
   display: grid;
-  grid-auto-rows: 40px;
+  grid-auto-rows: 50px;
   gap: 4px;
   z-index: 0;
 }
 
 .board-background__cell {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 4px;
 
   &.filled {
-    background-color: #555;
+    background-color: #c3c3c3;
   }
 
   &.empty {

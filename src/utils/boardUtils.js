@@ -1,15 +1,6 @@
-export const COLORS = [
-  "red",
-  "blue",
-  "green",
-  "yellow",
-  "purple",
-  "orange",
-  "pink",
-  "brown",
-  "lime",
-  "black",
-];
+import { GEMS } from "../data/gems";
+
+export const COLORS = Object.keys(GEMS);
 
 // random color, excluding given ones
 export function getRandomColor(excludedColors = []) {

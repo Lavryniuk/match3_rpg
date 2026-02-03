@@ -9,7 +9,7 @@ export default function BoardBackground({ mask }) {
     <div
       className="board-background"
       style={{
-        gridTemplateColumns: `repeat(${numCols}, 40px)`,
+        gridTemplateColumns: `repeat(${numCols}, 50px)`,
       }}
     >
       {mask.map((rowMask, rowIndex) =>

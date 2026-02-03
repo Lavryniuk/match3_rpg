@@ -13,7 +13,7 @@ export default function Board({ boardApi, selectedCellApi, onCellClick }) {
       className="match3__board"
       style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${numCols}, 40px)`,
+        gridTemplateColumns: `repeat(${numCols}, 50px)`,
       }}
     >
       {board.map((row, rowIndex) =>
