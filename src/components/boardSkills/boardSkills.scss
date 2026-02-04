@@ -1,0 +1,43 @@
+.skills {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 34px 42px;
+  padding-bottom: 0;
+  flex-wrap: wrap;
+
+  &-bg {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+
+    filter: drop-shadow(0 10px 5px rgba(0, 0, 0, 0.5))
+      drop-shadow(0 15px 10px rgba(0, 0, 0, 0.35));
+  }
+}
+
+.skill {
+  &-button {
+    position: relative;
+    width: 78px;
+    padding: 0;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 20px black;
+
+    &:hover {
+      background: #555;
+    }
+  }
+
+  &-image {
+    width: 78px;
+    height: 78px;
+  }
+
+  &-name {
+    color: white;
+  }
+}

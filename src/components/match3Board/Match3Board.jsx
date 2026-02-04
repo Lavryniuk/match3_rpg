@@ -6,8 +6,17 @@ import "./Match3Board.scss";
 
 import Board from "../board/Board";
 import BoardBackground from "../boardBackground/BoardBackground";
+import BoardSkills from "../boardSkills/BoardSkills";
+import BoardModal from "../boardModal/BoardModal";
+import { useState } from "react";
+
+import skillDeck from "../../assets/bg/skillDeck2.png";
+import gearIcon from "../../assets/icons/menu_gear.png";
 
 export default function Match3Board({ character, params, level }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  console.log(isModalOpen);
+
   const boardApi = useBoard(params);
   const skillApi = useSkill(boardApi.applyUpdateGameState);
   const selectedCellApi = useSelectedCell(boardApi.handleSwap);
@@ -19,6 +28,14 @@ export default function Match3Board({ character, params, level }) {
     onPatternSelect,
     isBoardBlocked,
   } = useGameMode(level, character, boardApi, skillApi, selectedCellApi);
+
+  function openModal() {
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="match3">
@@ -41,28 +58,37 @@ export default function Match3Board({ character, params, level }) {
         )}
       </div>
 
-      <div className="match3__skills">
-        {character.skills.map((skill) => (
-          <button
-            key={skill.id}
-            className="match3__skill-button"
-            disabled={
-              skill.charges <= 0 || isBoardBlocked || boardApi.levelStatus
-            }
-            onClick={() => onSkillClick(skill)}
-          >
-            {skill.name} ({skill.charges})
-          </button>
-        ))}
-      </div>
-
-      <div className="match3Board" style={{ position: "relative" }}>
+      <div className="match3Board">
         <BoardBackground mask={params.mask} />
         <Board
           boardApi={boardApi}
           selectedCellApi={selectedCellApi}
           onCellClick={onCellClick}
         />
+      </div>
+
+      <div className="match3__skills">
+        <img src={skillDeck} alt="" className="skills-bg" />
+        <BoardSkills
+          character={character}
+          levelStatus={boardApi.levelStatus}
+          isBoardBlocked={isBoardBlocked}
+          onSkillClick={onSkillClick}
+        />
+      </div>
+
+      {!isModalOpen && (
+        <div className="match3__menu" onClick={openModal}>
+          <button className="match3__menu-button">
+            <img src={gearIcon} alt="gearIcon" />
+          </button>
+        </div>
+      )}
+
+      <div className="match3__modal">
+        {isModalOpen && (
+          <BoardModal isOpen={isModalOpen} closeModal={closeModal} />
+        )}
       </div>
 
       {mode === "pattern-selection" && activeSkill.patterns && (

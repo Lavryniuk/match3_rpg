@@ -1,48 +1,32 @@
 .match3 {
+  position: relative;
   padding: 20px;
-  min-height: 91vh;
-  width: 92%;
-  background-image: url("../../assets/bg/6674f0cdb5b7b401612cf065_noise-50.avif");
-  background-size: auto;
-  background-repeat: repeat;
-  background-position: top left;
+  min-height: 100vh;
+  width: 100%;
+  background-image: url("../../assets/acts_bg/act_1_BG.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 
   &__title {
     font-size: 28px;
     margin-bottom: 12px;
+    color: #fff;
   }
 
   &__info {
     margin-bottom: 16px;
+    color: #fff;
 
     p {
       margin: 4px 0;
+      color: #fff;
     }
   }
 
   &__status {
     font-weight: bold;
     color: gold;
-  }
-
-  &__skills {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  &__skill-button {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: #3a3a3a;
-    color: white;
-
-    &:hover {
-      background: #555;
-    }
   }
 
   &__pattern-modal {
@@ -79,4 +63,36 @@
   &__pattern-button:hover {
     background: #666;
   }
+
+  &__skills {
+    position: relative;
+    padding-top: 20px;
+    width: 430px;
+    height: 180px;
+  }
+
+  &__menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background: transparent;
+    // opacity: 50%;
+
+    &-button {
+      padding: 5px;
+      width: 100%;
+      min-height: 100%;
+      position: relative;
+      border-radius: 100%;
+      cursor: pointer;
+    }
+  }
+}
+
+.match3Board {
+  position: relative;
+  min-height: calc(8 * 50px + 7 * 4px);
 }

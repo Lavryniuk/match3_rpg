@@ -12,7 +12,6 @@ export default function Board({ boardApi, selectedCellApi, onCellClick }) {
     <div
       className="match3__board"
       style={{
-        display: "grid",
         gridTemplateColumns: `repeat(${numCols}, 50px)`,
       }}
     >
