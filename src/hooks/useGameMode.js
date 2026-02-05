@@ -24,9 +24,10 @@ export function useGameMode(
   const onSkillClick = (skill) => {
     boardApi.interruptHint();
     if (level <= 30 || skill.targetsCount === 0) {
+      console.log(skill.targetsCount);
       const context = contextGeneratorsLow[skill.id](
         skill,
-        board.length,
+        board,
         skill.targetsCount
       );
       applySkillEffect(character, skill.id, board, context);

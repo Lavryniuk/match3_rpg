@@ -280,7 +280,7 @@ export function shuffleBoard(board) {
   return newBoard;
 }
 
-function fisherShuffle(colors) {
+export function fisherShuffle(colors) {
   for (let i = colors.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
     [colors[i], colors[j]] = [colors[j], colors[i]];
