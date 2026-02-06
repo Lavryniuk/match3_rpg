@@ -1,55 +1,25 @@
-import { useState } from "react";
-import MapRoad from "./components/mapRoad/MapRoad";
-import Match3Board from "./components/match3Board/Match3Board";
-import LevelAndCharacterModal from "./components/levelAndCharacterModal/LevelAndCharacterModal";
-import { levels } from "./data/levels";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
-  const [showLevelModal, setShowLevelModal] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [levelNumber, setLevelNumber] = useState(1);
-  const [gameStarted, setGameStarted] = useState(false);
+import GameProvider from "./game/GameProvider";
+import MainLayout from "./pages/MainLayout";
+import HomePage from "./pages/HomePage";
+import LevelMapPage from "./pages/LevelMapPage";
+import CampPage from "./pages/CampPage";
+import InventoryPage from "./pages/InventoryPage";
 
-  const onStartLevel = (level) => {
-    setLevelNumber(level);
-    setShowLevelModal(true);
-  };
-
-  const handleCharacterSelect = (character) => {
-    setSelectedCharacter(character);
-  };
-
-  const handleStartGame = () => {
-    setShowLevelModal(false);
-    setGameStarted(true);
-  };
-
+export default function App() {
   return (
-    <div className="App" style={{ position: "relative" }}>
-      {!gameStarted && <MapRoad onStartLevel={onStartLevel} />}
-
-      {showLevelModal && (
-        <LevelAndCharacterModal
-          level={levelNumber}
-          selectedCharacter={selectedCharacter}
-          onCharacterSelect={handleCharacterSelect}
-          onClose={() => {
-            setShowLevelModal(false);
-            setSelectedCharacter(null);
-          }}
-          onStart={handleStartGame}
-        />
-      )}
-
-      {selectedCharacter && !showLevelModal && (
-        <Match3Board
-          character={selectedCharacter}
-          params={levels[levelNumber]}
-          level={levelNumber}
-        />
-      )}
-    </div>
+    <GameProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/map" element={<LevelMapPage />} />
+            <Route path="/camp" element={<CampPage />} />
+            <Route path="/inventory" element={<InventoryPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </GameProvider>
   );
 }
-
-export default App;
