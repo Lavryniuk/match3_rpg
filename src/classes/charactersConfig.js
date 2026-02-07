@@ -3,8 +3,11 @@ import Sorceress from "./Sorceress";
 import Archer from "./Archer";
 
 import sorceressAvatar from "../assets/avatars/sorceress.png";
+import sorceressInventoryAvatar from "../assets/avatars/sorceress-inventory-avatar.png";
 import paladinAvatar from "../assets/avatars/paladin.png";
+// import paladinInventoryAvatar from "../assets/avatars/paladin-inventory-avatar.png";
 import archerAvatar from "../assets/avatars/archer.png";
+// import archerInventoryAvatar from "../assets/avatars/archer-inventory-avatar.png";
 
 import swordStrike from "../assets/skills/paladin/swordStrike.png";
 import shieldPulse from "../assets/skills/paladin/shieldPulse.png";
@@ -22,6 +25,7 @@ export const characters = [
     name: "Lucian",
     class: "Paladin",
     avatar: paladinAvatar,
+    // inventoryAvatar: paladinInventoryAvatar,
     classRef: Paladin,
     skills: [
       {
@@ -74,7 +78,9 @@ export const characters = [
     name: "Cortana",
     class: "Sorceress",
     avatar: sorceressAvatar,
+    inventoryAvatar: sorceressInventoryAvatar,
     classRef: Sorceress,
+    bio: "Master of arcane forces, she casts powerful spells that shape the flow of battle. Every gesture sparks magic, every incantation alters reality.",
     skills: [
       {
         id: "meteor",
@@ -115,6 +121,7 @@ export const characters = [
     name: "Elandor",
     class: "Archer",
     avatar: archerAvatar,
+    // inventoryAvatar: archerInventoryAvatar,
     classRef: Archer,
     skills: [
       {

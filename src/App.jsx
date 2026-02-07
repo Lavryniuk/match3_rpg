@@ -5,7 +5,7 @@ import MainLayout from "./pages/MainLayout";
 import HomePage from "./pages/HomePage";
 import LevelMapPage from "./pages/LevelMapPage";
 import CampPage from "./pages/CampPage";
-import InventoryPage from "./pages/InventoryPage";
+import InventoryPage from "./pages/inventoryPage/InventoryPage";
 
 export default function App() {
   return (
