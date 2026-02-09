@@ -1,5 +1,5 @@
 export const CHARCLASSES = [
-  { id: "paladin" },
-  { id: "sorceress" },
-  { id: "archer" },
+  { name: "paladin" },
+  { name: "sorceress" },
+  { name: "archer" },
 ];

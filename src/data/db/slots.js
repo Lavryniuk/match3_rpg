@@ -5,9 +5,9 @@ import shieldShadow from "../../assets/icons/shadow-slots/shield-shadow.png";
 import bootsShadow from "../../assets/icons/shadow-slots/boots-shadow.png";
 
 export const SLOTS = [
-  { id: "helmet", icon: helmetShadow },
-  { id: "body", icon: bodyShadow },
-  { id: "weapon", icon: weaponShadow },
-  { id: "shield", icon: shieldShadow },
-  { id: "boots", icon: bootsShadow },
+  { name: "helmet", icon: helmetShadow },
+  { name: "body", icon: bodyShadow },
+  { name: "weapon", icon: weaponShadow },
+  { name: "shield", icon: shieldShadow },
+  { name: "boots", icon: bootsShadow },
 ];

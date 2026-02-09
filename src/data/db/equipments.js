@@ -2,14 +2,14 @@ import { RARITIES } from "./rarities";
 import { SLOTS } from "./slots";
 import { CHARCLASSES } from "./charClasses";
 
-export const itemDB = CHARCLASSES.flatMap((charClass) =>
+export const equipmentsDB = CHARCLASSES.flatMap((charClassObj) =>
   RARITIES.flatMap((rarityObj) =>
     SLOTS.map((slotObj) => ({
-      id: `${slotObj.id}_${rarityObj.id}_${charClass}`,
+      id: `${slotObj.name}_${rarityObj.name}_${charClassObj.name}`,
       type: "equipment",
-      rarity: rarityObj.id,
-      slot: slotObj.id,
-      charClass,
+      rarity: rarityObj.name,
+      slot: slotObj.name,
+      charClass: charClassObj.name,
       stats: {},
       // icon: iconsMap[rarity],
     }))

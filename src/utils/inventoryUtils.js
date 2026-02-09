@@ -5,22 +5,22 @@ export function getRandomRarity(rarities, rand = Math.random()) {
 
   for (const rarity of rarities) {
     if (random < rarity.weight) {
-      return rarity.id;
+      return rarity.name;
     }
 
     random -= rarity.weight;
   }
 }
 
-export function getRandomSlot(slots, rand = Math.random()) {
-  const index = Math.floor(rand * slots.length);
+export function getRandomFromArray(array, rand = Math.random()) {
+  const index = Math.floor(rand * array.length);
 
-  return slots[index].id;
+  return array[index].name;
 }
 
 export function getRandomFragment({ rarities, slots, fragments }) {
   const rarity = getRandomRarity(rarities);
-  const slot = getRandomSlot(slots);
+  const slot = getRandomFromArray(slots);
 
   const result = fragments.find((f) => f.rarity === rarity && f.slot === slot);
 
@@ -52,20 +52,14 @@ export function craftItem({
   fragment,
   removeFragments,
   addEquipment,
-  items,
+  equipments,
   charClasses,
 }) {
   if (fragment.count < 10 || !fragment.identified) return;
 
-  const charClass = getRandomClass(charClasses);
+  const charClass = getRandomFromArray(charClasses);
 
-  addEquipment({ fragment, items, charClass });
+  addEquipment({ fragment, equipments, charClass });
 
   removeFragments(fragment);
-}
-
-export function getRandomClass(charClasses, rand = Math.random()) {
-  const index = Math.floor(rand * charClasses.length);
-
-  return charClasses[index];
 }
