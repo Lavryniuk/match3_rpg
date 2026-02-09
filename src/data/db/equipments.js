@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { RARITIES } from "./rarities";
 import { SLOTS } from "./slots";
 import { CHARCLASSES } from "./charClasses";
@@ -5,7 +7,7 @@ import { CHARCLASSES } from "./charClasses";
 export const equipmentsDB = CHARCLASSES.flatMap((charClassObj) =>
   RARITIES.flatMap((rarityObj) =>
     SLOTS.map((slotObj) => ({
-      id: `${slotObj.name}_${rarityObj.name}_${charClassObj.name}`,
+      id: uuidv4(),
       type: "equipment",
       rarity: rarityObj.name,
       slot: slotObj.name,

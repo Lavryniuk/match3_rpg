@@ -1,9 +1,11 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { RARITIES } from "./rarities";
 import { SLOTS } from "./slots";
 
 export const fragmentsDB = RARITIES.flatMap((rarityObj) =>
   SLOTS.map((slotObj) => ({
-    id: `frag_${slotObj.name}_${rarityObj.name}`,
+    id: uuidv4(),
     type: "fragment",
     rarity: rarityObj.name,
     slot: slotObj.name,
