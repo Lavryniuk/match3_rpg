@@ -33,10 +33,39 @@ export function getReward({
   slots,
   fragments,
   addCoins,
-  addFragment,
+  addUnknownFragment,
 }) {
   addCoins(levelCoinAmount);
 
   const fragment = getRandomFragment({ rarities, slots, fragments });
-  addFragment(fragment);
+  addUnknownFragment(fragment);
+}
+
+export function identifyFragment({ fragment, addFragment, useScroll }) {
+  if (fragment.identified) return;
+
+  useScroll(1);
+  addFragment({ ...fragment, identified: true });
+}
+
+export function craftItem({
+  fragment,
+  removeFragments,
+  addEquipment,
+  items,
+  charClasses,
+}) {
+  if (fragment.count < 10 || !fragment.identified) return;
+
+  const charClass = getRandomClass(charClasses);
+
+  addEquipment({ fragment, items, charClass });
+
+  removeFragments(fragment);
+}
+
+export function getRandomClass(charClasses, rand = Math.random()) {
+  const index = Math.floor(rand * charClasses.length);
+
+  return charClasses[index];
 }

@@ -1,9 +1,8 @@
 import { RARITIES } from "./rarities";
 import { SLOTS } from "./slots";
+import { CHARCLASSES } from "./charClasses";
 
-const charClasses = ["paladin", "sorceress", "archer"];
-
-export const itemDB = charClasses.flatMap((charClass) =>
+export const itemDB = CHARCLASSES.flatMap((charClass) =>
   RARITIES.flatMap((rarityObj) =>
     SLOTS.map((slotObj) => ({
       id: `${slotObj.id}_${rarityObj.id}_${charClass}`,

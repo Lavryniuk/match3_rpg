@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useGame } from "../../game/GameProvider";
 
-import { getReward } from "../../utils/inventoryUtils";
-import { RARITIES } from "../../data/db/rarities";
-import { SLOTS } from "../../data/db/slots";
-import { fragmentsDB } from "../../data/db/fragments";
-
 import { characters } from "../../classes/charactersConfig";
 
 import arrowLeft from "../../assets/icons/arrows/arrow-left.png";
@@ -15,32 +10,19 @@ import "./inventoryPage.scss";
 export default function InventoryPage() {
   const [selectedCharacterIndex, setSelectedCharacterIndex] = useState(1);
 
-  const { fragmentsInventory, itemsInventory, addFragment, addCoins } =
-    useGame();
+  const { fragmentsInventory, equipmentsInventory } = useGame();
 
   const inventoryToRender = [
     ...fragmentsInventory.filter((f) => f.type === "fragment"),
-    ...itemsInventory.filter((i) => i.type === "item"),
+    ...equipmentsInventory.filter((i) => i.type === "equipment"),
   ];
 
-  // const handlePrevCharacter = () => {
-  //   setSelectedCharacterIndex((i) => (i === 0 ? characters.length - 1 : i - 1));
-  // };
+  const handlePrevCharacter = () => {
+    setSelectedCharacterIndex((i) => (i === 0 ? characters.length - 1 : i - 1));
+  };
 
   const handleNextCharacter = () => {
     setSelectedCharacterIndex((i) => (i === characters.length - 1 ? 0 : i + 1));
-  };
-
-  //todo remove
-  const handlePrevCharacter = () => {
-    getReward({
-      levelCoinAmount: 50,
-      rarities: RARITIES,
-      slots: SLOTS,
-      fragments: fragmentsDB,
-      addCoins,
-      addFragment,
-    });
   };
 
   const selectedCharacter = characters[selectedCharacterIndex];

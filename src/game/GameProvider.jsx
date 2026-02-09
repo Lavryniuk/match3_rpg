@@ -7,8 +7,10 @@ export default function GameProvider({ children }) {
   const [scrolls, setScrolls] = useState(5);
   const [manaPotions, setManaPotions] = useState(5);
   const [fragmentsInventory, setFragmentsInventory] = useState([]);
-  console.log(fragmentsInventory);
-  const [itemsInventory, setItemsInventory] = useState([]);
+  const [equipmentsInventory, setEquipmentsInventory] = useState([]);
+
+  const addUnknownFragment = (fragment) =>
+    setFragmentsInventory((prev) => [...prev, { ...fragment }]);
 
   const addFragment = (fragment) =>
     setFragmentsInventory((prev) => {
@@ -20,6 +22,28 @@ export default function GameProvider({ children }) {
       }
 
       return [...prev, { ...fragment, count: 1 }];
+    });
+
+  const removeFragments = (fragment) =>
+    setFragmentsInventory((prev) => {
+      if (fragment.count < 10 || !fragment.identified) return;
+
+      const newInv = prev.map((f) =>
+        f.id === fragment.id ? { ...f, count: f.count - 10 } : f
+      );
+
+      return newInv.filter((f) => f.id !== fragment.id || f.count !== 0);
+    });
+
+  const addEquipment = ({ fragment, items, charClass }) =>
+    setEquipmentsInventory((prev) => {
+      const item = items.find(
+        (f) =>
+          f.rarity === fragment.rarity &&
+          f.slot === fragment.slot &&
+          f.charClass === charClass
+      );
+      return [...prev, { ...item }];
     });
 
   const addCoins = (amount) => setCoins((c) => c + amount);
@@ -45,7 +69,10 @@ export default function GameProvider({ children }) {
         useManaPotion,
         fragmentsInventory,
         addFragment,
-        itemsInventory,
+        addUnknownFragment,
+        removeFragments,
+        equipmentsInventory,
+        addEquipment,
       }}
     >
       {children}
