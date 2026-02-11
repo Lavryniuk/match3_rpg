@@ -41,11 +41,23 @@ export function getReward({
   addUnknownFragment(fragment);
 }
 
-export function identifyFragment({ fragment, addFragment, useScroll }) {
-  if (fragment.identified) return;
+export function identifyFragment({
+  fragment,
+  addFragment,
+  removeUnknownFragment,
+  scrolls,
+  useScroll,
+}) {
+  if (!fragment.type === "unknownFragment") return;
+  if (scrolls === 0) return;
 
-  useScroll(1);
-  addFragment({ ...fragment, identified: true });
+  useScroll();
+  addFragment({
+    rarity: fragment.rarity,
+    slot: fragment.slot,
+  });
+
+  removeUnknownFragment(fragment);
 }
 
 export function craftItem({
@@ -61,5 +73,5 @@ export function craftItem({
 
   addEquipment({ fragment, equipments, charClass });
 
-  removeFragments(fragment);
+  removeFragments({ rarity: fragment.rarity, slot: fragment.slot });
 }

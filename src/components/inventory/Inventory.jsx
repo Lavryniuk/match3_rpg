@@ -13,15 +13,22 @@ const MIN_ROWS = 3;
 
 export function Inventory({}) {
   const {
+    unknownFragments,
     fragmentsInventory,
     equipmentsInventory,
     addFragment,
+    scrolls,
     useScroll,
     addUnknownFragment,
     addCoins,
+    removeUnknownFragment,
   } = useGame();
 
-  const items = [...fragmentsInventory, ...equipmentsInventory];
+  const items = [
+    ...unknownFragments,
+    ...fragmentsInventory,
+    ...equipmentsInventory,
+  ];
 
   const minCells = COLUMNS * MIN_ROWS;
 
@@ -50,8 +57,20 @@ export function Inventory({}) {
     });
   };
 
-  const onIdentification = ({ fragment, addFragment, useScroll }) => {
-    identifyFragment({ fragment, addFragment, useScroll });
+  const onIdentification = ({
+    fragment,
+    addFragment,
+    removeUnknownFragment,
+    scrolls,
+    useScroll,
+  }) => {
+    identifyFragment({
+      fragment,
+      addFragment,
+      removeUnknownFragment,
+      scrolls,
+      useScroll,
+    });
   };
 
   return (
@@ -74,17 +93,27 @@ export function Inventory({}) {
         </button>
       </div>
       <div className="inventory__grid">
-        {cells.map((item, index) => (
-          <div
-            key={item?.id || index}
-            className="inventory__cell"
-            onClick={() =>
-              onIdentification({ fragment: item, addFragment, useScroll })
-            }
-          >
-            <InventoryCell item={item} />
-          </div>
-        ))}
+        {cells.map((_, index) => {
+          const item = items[index];
+
+          return (
+            <div
+              key={index}
+              onClick={() =>
+                onIdentification({
+                  fragment: item,
+                  addFragment,
+                  removeUnknownFragment,
+                  scrolls,
+                  useScroll,
+                })
+              }
+              className="inventory__cell"
+            >
+              <InventoryCell item={item} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
