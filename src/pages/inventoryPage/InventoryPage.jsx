@@ -1,21 +1,16 @@
 import { useState } from "react";
-import { useGame } from "../../game/GameProvider";
 
 import { characters } from "../../classes/charactersConfig";
 
 import arrowLeft from "../../assets/icons/arrows/arrow-left.png";
 import arrowRight from "../../assets/icons/arrows/arrow-right.png";
+
+import { Inventory } from "../../components/inventory/Inventory";
+
 import "./inventoryPage.scss";
 
 export default function InventoryPage() {
   const [selectedCharacterIndex, setSelectedCharacterIndex] = useState(1);
-
-  const { fragmentsInventory, equipmentsInventory } = useGame();
-
-  const inventoryToRender = [
-    ...fragmentsInventory.filter((f) => f.type === "fragment"),
-    ...equipmentsInventory.filter((i) => i.type === "equipment"),
-  ];
 
   const handlePrevCharacter = () => {
     setSelectedCharacterIndex((i) => (i === 0 ? characters.length - 1 : i - 1));
@@ -63,17 +58,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="inventory__grid-wrapper">
-        <h2 className="inventory__grid-name">Inventory</h2>
-        <div className="inventory__grid">
-          {inventoryToRender.map((item) => (
-            <div key={item.id} className="inventory__grid-cell">
-              <img src={item.icon} alt={item.id} />
-              <div>{item.count}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Inventory />
     </div>
   );
 }

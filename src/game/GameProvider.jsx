@@ -8,6 +8,7 @@ export default function GameProvider({ children }) {
   const [manaPotions, setManaPotions] = useState(5);
   const [fragmentsInventory, setFragmentsInventory] = useState([]);
   const [equipmentsInventory, setEquipmentsInventory] = useState([]);
+  console.log(fragmentsInventory);
 
   const addUnknownFragment = (fragment) =>
     setFragmentsInventory((prev) => [...prev, { ...fragment }]);
