@@ -1,0 +1,45 @@
+.cell {
+  &__stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+  }
+}
+
+.stack {
+  &__icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__overlay {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    width: auto;
+    height: 50px;
+    object-fit: contain;
+  }
+
+  &__count {
+    font-size: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: 150%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+  }
+}

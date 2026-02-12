@@ -1,12 +1,17 @@
 import { RARITIES } from "../../../../data/db/rarities";
+import { SLOTS } from "../../../../data/db/slots";
+
+import "./fragmentsStackCell.scss";
 
 export function FragmentsStackCell({ item }) {
   const rarityData = RARITIES.find((r) => r.name === item?.rarity);
+  const slotsData = SLOTS.find((s) => s.name === item.slot);
 
   return (
-    <div>
-      <img src={rarityData.icon} alt="" />
-      <div className="cell__count">{item.count}</div>
+    <div className="cell__stack">
+      <img className="stack__icon" src={slotsData.icon} alt="" />
+      <img className="stack__overlay" src={rarityData.icon} alt="" />
+      <div className="stack__count">{item.count}</div>
     </div>
   );
 }

@@ -13,7 +13,6 @@ export const equipmentsDB = CHARCLASSES.flatMap((charClassObj) =>
       slot: slotObj.name,
       charClass: charClassObj.name,
       stats: {},
-      // icon: iconsMap[rarity],
     }))
   )
 );

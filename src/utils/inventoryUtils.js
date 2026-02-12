@@ -48,7 +48,7 @@ export function identifyFragment({
   scrolls,
   useScroll,
 }) {
-  if (!fragment.type === "unknownFragment") return;
+  if (fragment.type !== "unknownFragment") return;
   if (scrolls === 0) return;
 
   useScroll();
@@ -67,11 +67,15 @@ export function craftItem({
   equipments,
   charClasses,
 }) {
-  if (fragment.count < 10 || !fragment.identified) return;
+  if (fragment.type !== "fragmentsStack") return;
+  if (fragment.count < 10) return;
 
   const charClass = getRandomFromArray(charClasses);
 
   addEquipment({ fragment, equipments, charClass });
 
-  removeFragments({ rarity: fragment.rarity, slot: fragment.slot });
+  removeFragments({
+    rarity: fragment.rarity,
+    slot: fragment.slot,
+  });
 }

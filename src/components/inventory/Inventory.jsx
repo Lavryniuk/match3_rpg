@@ -1,15 +1,21 @@
 import { useGame } from "../../game/GameProvider";
 import { InventoryCell } from "../inventoryCell/InventoryCell";
 
-import { getReward, identifyFragment } from "../../utils/inventoryUtils";
+import {
+  getReward,
+  identifyFragment,
+  craftItem,
+} from "../../utils/inventoryUtils";
 import { SLOTS } from "../../data/db/slots";
 import { RARITIES } from "../../data/db/rarities";
 import { fragmentsDB } from "../../data/db/fragments";
+import { equipmentsDB } from "../../data/db/equipments";
+import { CHARCLASSES } from "../../data/db/charClasses";
 
 import "./inventory.scss";
 
-const COLUMNS = 5;
-const MIN_ROWS = 3;
+const COLUMNS = 4;
+const MIN_ROWS = 2;
 
 export function Inventory({}) {
   const {
@@ -22,6 +28,8 @@ export function Inventory({}) {
     addUnknownFragment,
     addCoins,
     removeUnknownFragment,
+    removeFragments,
+    addEquipment,
   } = useGame();
 
   const items = [
@@ -73,6 +81,22 @@ export function Inventory({}) {
     });
   };
 
+  const onCraft = ({
+    fragment,
+    removeFragments,
+    addEquipment,
+    equipments,
+    charClasses,
+  }) => {
+    craftItem({
+      fragment,
+      removeFragments,
+      addEquipment,
+      equipments,
+      charClasses,
+    });
+  };
+
   return (
     <div className="inventory__grid-wrapper">
       <h2 className="inventory__grid-name">Inventory</h2>
@@ -100,13 +124,21 @@ export function Inventory({}) {
             <div
               key={index}
               onClick={() =>
-                onIdentification({
-                  fragment: item,
-                  addFragment,
-                  removeUnknownFragment,
-                  scrolls,
-                  useScroll,
-                })
+                item?.type === "unknownFragment"
+                  ? onIdentification({
+                      fragment: item,
+                      addFragment,
+                      removeUnknownFragment,
+                      scrolls,
+                      useScroll,
+                    })
+                  : onCraft({
+                      fragment: item,
+                      removeFragments,
+                      addEquipment,
+                      equipments: equipmentsDB,
+                      charClasses: CHARCLASSES,
+                    })
               }
               className="inventory__cell"
             >

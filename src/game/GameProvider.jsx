@@ -33,22 +33,18 @@ export default function GameProvider({ children }) {
 
   const removeFragments = ({ rarity, slot }) =>
     setFragmentsInventory((prev) => {
-      if (fragment.count < 10 || !fragment.identified) return;
-
       const newInv = prev.map((f) =>
         f.rarity === rarity && f.slot === slot
           ? { ...f, count: f.count - 10 }
           : f
       );
 
-      return newInv.filter(
-        (f) => (f.rarity === rarity && f.slot === slot) || f.count !== 0
-      );
+      return newInv.filter((f) => f.count !== 0);
     });
 
-  const addEquipment = ({ fragment, items, charClass }) =>
+  const addEquipment = ({ fragment, equipments, charClass }) =>
     setEquipmentsInventory((prev) => {
-      const item = items.find(
+      const item = equipments.find(
         (f) =>
           f.rarity === fragment.rarity &&
           f.slot === fragment.slot &&
