@@ -5,10 +5,10 @@ const GameContext = createContext();
 
 export default function GameProvider({ children }) {
   const [coins, setCoins] = useState(100);
-  const [scrolls, setScrolls] = useState(5);
+  const [scrolls, setScrolls] = useState(500);
   const [manaPotions, setManaPotions] = useState(5);
   const [unknownFragments, setUnknownFragments] = useState([]);
-  const [fragmentsInventory, setFragmentsInventory] = useState([]);
+  const [fragmentStacks, setFragmentStacks] = useState([]);
   const [equipmentsInventory, setEquipmentsInventory] = useState([]);
 
   const addUnknownFragment = (fragment) =>
@@ -18,7 +18,7 @@ export default function GameProvider({ children }) {
     setUnknownFragments((prev) => prev.filter((f) => f.id !== fragment.id));
 
   const addFragment = ({ rarity, slot }) =>
-    setFragmentsInventory((prev) => {
+    setFragmentStacks((prev) => {
       const existing = prev.find((f) => f.rarity === rarity && f.slot === slot);
       if (existing) {
         return prev.map((f) =>
@@ -28,11 +28,11 @@ export default function GameProvider({ children }) {
         );
       }
 
-      return [...prev, { type: "fragmentsStack", rarity, slot, count: 1 }];
+      return [...prev, { type: "fragmentStacks", rarity, slot, count: 1 }];
     });
 
   const removeFragments = ({ rarity, slot }) =>
-    setFragmentsInventory((prev) => {
+    setFragmentStacks((prev) => {
       const newInv = prev.map((f) =>
         f.rarity === rarity && f.slot === slot
           ? { ...f, count: f.count - 10 }
@@ -78,7 +78,7 @@ export default function GameProvider({ children }) {
         useScroll,
         addManaPotion,
         useManaPotion,
-        fragmentsInventory,
+        fragmentStacks,
         unknownFragments,
         addFragment,
         addUnknownFragment,

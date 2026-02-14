@@ -20,7 +20,7 @@ const MIN_ROWS = 2;
 export function Inventory({}) {
   const {
     unknownFragments,
-    fragmentsInventory,
+    fragmentStacks,
     equipmentsInventory,
     addFragment,
     scrolls,
@@ -34,7 +34,7 @@ export function Inventory({}) {
 
   const items = [
     ...unknownFragments,
-    ...fragmentsInventory,
+    ...fragmentStacks,
     ...equipmentsInventory,
   ];
 

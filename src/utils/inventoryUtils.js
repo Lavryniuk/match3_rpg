@@ -67,7 +67,7 @@ export function craftItem({
   equipments,
   charClasses,
 }) {
-  if (fragment.type !== "fragmentsStack") return;
+  if (fragment.type !== "fragmentStacks") return;
   if (fragment.count < 10) return;
 
   const charClass = getRandomFromArray(charClasses);

@@ -1,9 +1,9 @@
 import { RARITIES } from "../../../../data/db/rarities";
 import { SLOTS } from "../../../../data/db/slots";
 
-import "./fragmentsStackCell.scss";
+import "./fragmentStacksCell.scss";
 
-export function FragmentsStackCell({ item }) {
+export function FragmentStacksCell({ item }) {
   const rarityData = RARITIES.find((r) => r.name === item?.rarity);
   const slotsData = SLOTS.find((s) => s.name === item.slot);
 
