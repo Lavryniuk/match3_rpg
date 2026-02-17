@@ -1,0 +1,91 @@
+.character {
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 50%;
+    perspective: 1000px;
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 24px;
+    padding: 10px;
+    background-image: url("../../assets/bg/card-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #fed49e;
+    border-radius: 5px;
+    width: auto;
+    height: 100%;
+    gap: 10px;
+    box-shadow: 0px 5px 15px #231709;
+    transform-style: preserve-3d;
+    transition: transform 1s ease;
+    cursor: pointer;
+
+    &.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    &-front {
+      display: flex;
+      backface-visibility: hidden;
+    }
+
+    &-back {
+      position: absolute;
+      display: flex;
+      backface-visibility: hidden;
+      transform: rotateY(180deg);
+      width: 90%;
+      height: 90%;
+    }
+  }
+
+  &__avatar {
+    width: 140px;
+    height: 200px;
+    object-fit: cover;
+    margin: 10px;
+    filter: drop-shadow(-5px 10px 11px rgba(0, 0, 0, 0.7))
+      drop-shadow(5px -8px 11px rgba(0, 0, 0, 0.7));
+  }
+
+  &__info {
+    text-align: center;
+    align-self: flex-start;
+    justify-items: left;
+
+    &-class {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    &-bio {
+      line-height: 24px;
+      font-size: 18px;
+      text-align: left;
+    }
+  }
+
+  &__arrows {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  &__arrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+    filter: drop-shadow(-5px 10px 11px rgba(0, 0, 0, 0.7))
+      drop-shadow(5px -8px 11px rgba(0, 0, 0, 0.7));
+  }
+}
