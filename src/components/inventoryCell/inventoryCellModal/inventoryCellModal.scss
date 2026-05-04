@@ -1,0 +1,61 @@
+.cell {
+  &__modal {
+    padding: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    width: 350px;
+    height: 220px;
+    background-image: url("../../../assets/bg/card-bg.png");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+  }
+
+  &__wrapper {
+    display: grid;
+    height: 200px;
+    grid-template-columns: 136px 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  &__preview {
+    padding: 10px 20px;
+    position: relative;
+    width: 100%;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-name {
+      color: #fed49e;
+      padding-left: 20px;
+      grid-column: 1 / 3;
+      text-align-last: left;
+    }
+  }
+
+  &__info {
+    padding-top: 10px;
+    padding-right: 20px;
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &-description {
+      color: #fed49e;
+      text-align: left;
+    }
+
+    &-button {
+      width: 50px;
+      height: 20px;
+      align-self: center;
+    }
+  }
+}
