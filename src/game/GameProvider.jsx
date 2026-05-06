@@ -1,15 +1,47 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const GameContext = createContext();
 
 export default function GameProvider({ children }) {
-  const [coins, setCoins] = useState(100);
-  const [scrolls, setScrolls] = useState(500);
-  const [manaPotions, setManaPotions] = useState(5);
-  const [unknownFragments, setUnknownFragments] = useState([]);
-  const [fragmentStacks, setFragmentStacks] = useState([]);
-  const [equipmentsInventory, setEquipmentsInventory] = useState([]);
+  const [localState] = useState(() => {
+    const saved = localStorage.getItem("gameState");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [coins, setCoins] = useState(localState?.coins ?? 100);
+  const [scrolls, setScrolls] = useState(localState?.scrolls ?? 500);
+  const [manaPotions, setManaPotions] = useState(localState?.manaPotions ?? 5);
+  const [unknownFragments, setUnknownFragments] = useState(
+    localState?.unknownFragments ?? []
+  );
+  const [fragmentStacks, setFragmentStacks] = useState(
+    localState?.fragmentStacks ?? []
+  );
+  const [equipmentsInventory, setEquipmentsInventory] = useState(
+    localState?.equipmentsInventory ?? []
+  );
+
+  useEffect(() => {
+    localStorage.setItem(
+      "gameState",
+      JSON.stringify({
+        coins,
+        scrolls,
+        manaPotions,
+        unknownFragments,
+        fragmentStacks,
+        equipmentsInventory,
+      })
+    );
+  }, [
+    coins,
+    scrolls,
+    manaPotions,
+    unknownFragments,
+    fragmentStacks,
+    equipmentsInventory,
+  ]);
 
   const addUnknownFragment = (fragment) =>
     setUnknownFragments((prev) => [...prev, { ...fragment, id: uuidv4() }]);
