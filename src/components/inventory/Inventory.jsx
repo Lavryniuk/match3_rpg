@@ -1,40 +1,23 @@
 import { useGame } from "../../game/GameProvider";
 import { InventoryCell } from "../inventoryCell/InventoryCell";
-import { InventoryCellModal } from "../inventoryCell/inventoryCellModal/InventoryCellModal";
 
-import {
-  getReward,
-  identifyFragment,
-  craftItem,
-} from "../../utils/inventoryUtils";
+import { getReward } from "../../utils/inventoryUtils";
 import { SLOTS } from "../../data/db/slots";
 import { RARITIES } from "../../data/db/rarities";
 import { fragmentsDB } from "../../data/db/fragments";
-import { equipmentsDB } from "../../data/db/equipments";
-import { CHARCLASSES } from "../../data/db/charClasses";
 
 import "./inventory.scss";
-import { useState } from "react";
 
 const COLUMNS = 4;
 const MIN_ROWS = 2;
 
-export function Inventory({}) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-
+export function Inventory({ onSelectCell }) {
   const {
     unknownFragments,
     fragmentStacks,
     equipmentsInventory,
-    addFragment,
-    scrolls,
-    useScroll,
     addUnknownFragment,
     addCoins,
-    removeUnknownFragment,
-    removeFragments,
-    addEquipment,
   } = useGame();
 
   const items = [
@@ -52,22 +35,6 @@ export function Inventory({}) {
 
   const cells = Array.from({ length: neededCells }, (_, i) => items[i]);
 
-  function showModal() {
-    setIsModalOpen(true);
-  }
-
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-
-  function onSelectCell(item) {
-    if (!item) return;
-
-    setSelectedItem(item);
-
-    showModal();
-  }
-
   const onReward = ({
     levelCoinAmount,
     rarities,
@@ -83,38 +50,6 @@ export function Inventory({}) {
       fragments,
       addCoins,
       addUnknownFragment,
-    });
-  };
-
-  const onIdentification = ({
-    fragment,
-    addFragment,
-    removeUnknownFragment,
-    scrolls,
-    useScroll,
-  }) => {
-    identifyFragment({
-      fragment,
-      addFragment,
-      removeUnknownFragment,
-      scrolls,
-      useScroll,
-    });
-  };
-
-  const onCraft = ({
-    fragment,
-    removeFragments,
-    addEquipment,
-    equipments,
-    charClasses,
-  }) => {
-    craftItem({
-      fragment,
-      removeFragments,
-      addEquipment,
-      equipments,
-      charClasses,
     });
   };
 
@@ -137,30 +72,7 @@ export function Inventory({}) {
           reward
         </button>
       </div>
-      {isModalOpen && (
-        <InventoryCellModal
-          item={selectedItem}
-          onClose={closeModal}
-          onIdentification={() =>
-            onIdentification({
-              fragment: selectedItem,
-              addFragment,
-              removeUnknownFragment,
-              scrolls,
-              useScroll,
-            })
-          }
-          onCraft={() =>
-            onCraft({
-              fragment: selectedItem,
-              removeFragments,
-              addEquipment,
-              equipments: equipmentsDB,
-              charClasses: CHARCLASSES,
-            })
-          }
-        />
-      )}
+
       <div className="inventory__grid">
         {cells.map((_, index) => {
           const item = items[index];

@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import { characters } from "../../classes/charactersConfig";
-
 import arrowLeft from "../../assets/icons/arrows/arrow-left.png";
 import arrowRight from "../../assets/icons/arrows/arrow-right.png";
 
@@ -9,23 +7,19 @@ import "./inventoryCharacterPanel.scss";
 import { FrontCard } from "./frontCard";
 import { BackCard } from "./backCard";
 
-export function InventoryCharacterPanel() {
+export function InventoryCharacterPanel({
+  selectedCharacter,
+  handlePrevCharacter,
+  handleNextCharacter,
+  onSelectCell,
+  currentInventory,
+}) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [selectedCharacterIndex, setSelectedCharacterIndex] = useState(1);
 
   function toggleFlip() {
     setIsFlipped((prev) => !prev);
   }
 
-  const handlePrevCharacter = () => {
-    setSelectedCharacterIndex((i) => (i === 0 ? characters.length - 1 : i - 1));
-  };
-
-  const handleNextCharacter = () => {
-    setSelectedCharacterIndex((i) => (i === characters.length - 1 ? 0 : i + 1));
-  };
-
-  const selectedCharacter = characters[selectedCharacterIndex];
   return (
     <div className="character__panel">
       <div
@@ -37,7 +31,10 @@ export function InventoryCharacterPanel() {
         }}
       >
         <FrontCard selectedCharacter={selectedCharacter} />
-        <BackCard />
+        <BackCard
+          onSelectCell={onSelectCell}
+          currentInventory={currentInventory}
+        />
       </div>
 
       <div className="character__arrows">
