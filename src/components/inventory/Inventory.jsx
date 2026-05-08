@@ -35,6 +35,8 @@ export function Inventory({ onSelectCell }) {
 
   const cells = Array.from({ length: neededCells }, (_, i) => items[i]);
 
+  const context = "inventory";
+
   const onReward = ({
     levelCoinAmount,
     rarities,
@@ -80,7 +82,7 @@ export function Inventory({ onSelectCell }) {
           return (
             <div
               key={index}
-              onClick={() => onSelectCell(item)}
+              onClick={() => onSelectCell(item, context)}
               className="inventory__cell"
             >
               <InventoryCell item={item} />

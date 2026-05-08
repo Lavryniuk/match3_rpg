@@ -17,6 +17,7 @@ export default function InventoryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCharacterIndex, setSelectedCharacterIndex] = useState(1);
+  const [context, setContext] = useState(null);
 
   const {
     addFragment,
@@ -26,6 +27,7 @@ export default function InventoryPage() {
     removeFragments,
     addEquipment,
     equipItem,
+    unequipItem,
     charactersInventory,
   } = useGame();
 
@@ -39,10 +41,11 @@ export default function InventoryPage() {
     setIsModalOpen(false);
   }
 
-  function onSelectCell(item) {
+  function onSelectCell(item, context) {
     if (!item) return;
 
     setSelectedItem(item);
+    setContext(context);
 
     showModal();
   }
@@ -81,6 +84,10 @@ export default function InventoryPage() {
 
   const onEquip = ({ item, charId }) => {
     equipItem({ item, charId });
+  };
+
+  const onUnequip = ({ slot, charId }) => {
+    unequipItem({ slot, charId });
   };
 
   const handlePrevCharacter = () => {
@@ -129,6 +136,10 @@ export default function InventoryPage() {
           onEquip={() =>
             onEquip({ item: selectedItem, charId: selectedCharacter.id })
           }
+          onUnequip={() =>
+            onUnequip({ slot: selectedItem.slot, charId: selectedCharacter.id })
+          }
+          context={context}
         />
       )}
     </div>

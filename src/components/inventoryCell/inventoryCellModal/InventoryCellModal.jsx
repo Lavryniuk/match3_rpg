@@ -7,6 +7,9 @@ export function InventoryCellModal({
   onClose,
   onIdentification,
   onCraft,
+  onEquip,
+  onUnequip,
+  context,
 }) {
   const actions = {
     unknownFragment: {
@@ -18,8 +21,8 @@ export function InventoryCellModal({
       handler: onCraft,
     },
     equipment: {
-      label: "Equip",
-      // handler: onEquip,
+      label: context === "character" ? "Unequip" : "Equip",
+      handler: context === "character" ? onUnequip : onEquip,
     },
   };
 
